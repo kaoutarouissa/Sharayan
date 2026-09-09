@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ImpactSection() {
+export default function SectionImpact() {
   const cards = [
     {
       id: 1,

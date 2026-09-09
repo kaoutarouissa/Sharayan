@@ -1,18 +1,10 @@
-import './App.css'
-import Navbar from './components/Navbar'
-import Hero from './components/Hero'
-import ImpactSection from './components/sectionImpact'
-import Footer from './components/Footer'
+import AppRoutes from "./routes/AppRoutes";
 function App() {
-
   return (
-   <>
-    <Navbar/>
-    <Hero/>
-    <ImpactSection/>
-    <Footer/>
-   </>
-  )
+    <>
+      <AppRoutes />
+    </>
+  );
 }
 
-export default App
+export default App;

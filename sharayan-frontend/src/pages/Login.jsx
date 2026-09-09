@@ -1,4 +1,6 @@
 import React from "react";
+import {Link} from 'react-router-dom'
+
 export default function Login() {
   return (
     <div className="min-h-[85vh] bg-slate-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -33,9 +35,9 @@ export default function Login() {
         </h2>
         <p className="mt-2 text-center text-sm text-slate-600">
           Vous n'avez pas encore de compte ?
-          <a href="#" className="font-semibold text-[#A6192E] hover:underline">
+          <Link to="/register" className="font-semibold text-[#A6192E] hover:underline">
             S'inscrire
-          </a>
+          </Link>
         </p>
       </div>
 

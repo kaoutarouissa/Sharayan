@@ -1,11 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { login } from "../services/auth";
+import { Link,useNavigate } from "react-router-dom";
+import { login } from "../services/authService"
 import { useState } from "react";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -18,7 +19,16 @@ export default function Login() {
         navigate("/patient/dashboard");
       }
     } catch (error) {
-      setError(error.response?.data?.message || "Une erreur est survenue");
+       console.log("ERREUR LOGIN :", error);
+    console.log("RESPONSE :", error.response);
+    console.log("DATA :", error.response?.data);
+
+    setError(
+        error.response?.data?.message ||
+        error.message ||
+        "Une erreur est survenue"
+    );
+      // setError(error.response?.data?.message || "Une erreur est survenue");
     }
   };
 
@@ -131,12 +141,14 @@ export default function Login() {
             </div>
 
             {/* <!-- Bouton de validation --> */}
-            <button
-              type="submit"
-              className="w-full bg-[#B31919] hover:bg-[#8B1212] text-white font-semibold py-3.5 rounded-xl transition duration-200 shadow-md"
-            >
-              Se connecter
-            </button>
+            
+              <button
+                type="submit"
+                className="w-full bg-[#B31919] hover:bg-[#8B1212] text-white font-semibold py-3.5 rounded-xl transition duration-200 shadow-md"
+              >
+                Se connecter
+              </button>
+            
           </form>
         </div>
       </div>

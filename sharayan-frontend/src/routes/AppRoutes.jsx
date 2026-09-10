@@ -1,4 +1,4 @@
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Login from "../pages/Login";
 import Home from "../pages/Home";
 import Register from "../pages/Register";
@@ -7,7 +7,7 @@ import Donneur from "../pages/DashboardDonneur/demandeDon"
 import Patient from "../pages/DashboardPatient/DemandeTransffusion"
 export default function AppRoutes() {
   return (
-    <BrowserRouter>
+    
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -16,6 +16,6 @@ export default function AppRoutes() {
         <Route path="/donneur/dashboard" element={<Donneur />} />
         <Route path="/patient/dashboard" element={<Patient />} />
       </Routes>
-    </BrowserRouter>
+    
   );
 }

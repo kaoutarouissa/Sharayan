@@ -26,6 +26,7 @@ export default function Register() {
             <div className="relative">
               <input
                 type="text"
+                name="name"
                 placeholder="Jean Dupont"
                 className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 pr-10 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none transition placeholder-slate-400"
               />
@@ -43,6 +44,7 @@ export default function Register() {
             <div className="flex bg-[#F2F4FF] rounded-xl overflow-hidden focus-within:ring-1 focus-within:ring-[#C81E3B] focus-within:bg-white">
               <input
                 type="tel"
+                name="telephone"
                 placeholder="06 12 34 56 78"
                 className="w-full bg-transparent text-slate-700 text-xs px-3 py-3 border-none outline-none placeholder-slate-400"
               />
@@ -57,6 +59,7 @@ export default function Register() {
             <div className="relative">
               <input
                 type="email"
+                name="email"
                 placeholder="jean.dupont@email.com"
                 className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 pr-10 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none transition placeholder-slate-400"
               />
@@ -73,6 +76,7 @@ export default function Register() {
             <div className="relative">
               <input
                 type="password"
+                name="password"
                 placeholder="••••••••"
                 className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 pr-10 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none transition placeholder-slate-400"
               />
@@ -90,6 +94,7 @@ export default function Register() {
             <div className="relative">
               <input
                 type="password"
+                name="confirme_password"
                 placeholder="••••••••"
                 className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 pr-10 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none transition placeholder-slate-400"
               />
@@ -105,7 +110,7 @@ export default function Register() {
               Rôle
             </label>
             <div className="relative">
-              <select className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 pr-10 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none appearance-none cursor-pointer">
+              <select name="role" className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 pr-10 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none appearance-none cursor-pointer">
                 <option value="donneur">Donneur</option>
                 <option value="demandeur">Patient</option>
                 <option value="hopital">Admin</option>

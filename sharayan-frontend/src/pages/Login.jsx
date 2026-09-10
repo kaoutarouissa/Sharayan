@@ -1,7 +1,27 @@
 import React from "react";
-import {Link} from 'react-router-dom'
-
+import { Link } from "react-router-dom";
+import { login } from "../services/auth";
+import { useState } from "react";
 export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const data = await login(email, password);
+      if (data.user.role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (data.user.role === "donneur") {
+        navigate("/donneur/dashboard");
+      } else if (data.user.role === "patient") {
+        navigate("/patient/dashboard");
+      }
+    } catch (error) {
+      setError(error.response?.data?.message || "Une erreur est survenue");
+    }
+  };
+
   return (
     <div className="min-h-[85vh] bg-slate-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -35,7 +55,10 @@ export default function Login() {
         </h2>
         <p className="mt-2 text-center text-sm text-slate-600">
           Vous n'avez pas encore de compte ?
-          <Link to="/register" className="font-semibold text-[#A6192E] hover:underline">
+          <Link
+            to="/register"
+            className="font-semibold text-[#A6192E] hover:underline"
+          >
             S'inscrire
           </Link>
         </p>
@@ -44,7 +67,8 @@ export default function Login() {
       {/* <!-- Formulaire --> */}
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-6 shadow-sm border border-slate-200 rounded-2xl sm:px-10">
-          <form className="space-y-6" action="#" method="POST">
+          <form onSubmit={handleLogin} className="space-y-6" method="POST">
+            {error && <p className="text-red-500 text-sm">{error}</p>}
             {/* <!-- Champ Email --> */}
             <div>
               <label
@@ -57,6 +81,8 @@ export default function Login() {
                 id="email"
                 name="email"
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
                 placeholder="exemple@domaine.com"
                 className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#A6192E] focus:border-[#A6192E] outline-none text-sm transition"
@@ -75,6 +101,8 @@ export default function Login() {
                 id="password"
                 name="password"
                 type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="••••••••"
                 className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-[#A6192E] focus:border-[#A6192E] outline-none text-sm transition"

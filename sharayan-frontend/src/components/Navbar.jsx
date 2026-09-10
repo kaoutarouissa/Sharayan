@@ -1,9 +1,13 @@
+
 import React from "react";
-import {Link} from 'react-router-dom'
+import { Link } from "react-router-dom";
 
 export default function Navbar() {
+  const user = JSON.parse(localStorage.getItem("user"));
+
   return (
     <nav className="w-full bg-white border-b border-gray-100 py-3 px-4 sm:px-8 md:px-10 flex items-center justify-between">
+
       {/* Logo + Nom */}
       <div className="flex items-center gap-2 sm:gap-4">
         <svg
@@ -41,7 +45,8 @@ export default function Navbar() {
 
       {/* Menu */}
       <div className="flex items-center gap-4 sm:gap-8 md:gap-10">
-        {/* Espace d'urgence (B9a kaban f Mobile + PC) */}
+
+        {/* Espace d'urgence */}
         <a
           href="#"
           className="text-[#B31919] hover:text-[#8B1212] text-xs sm:text-base font-semibold text-center leading-tight transition duration-200"
@@ -51,34 +56,51 @@ export default function Navbar() {
           d'urgence
         </a>
 
-        {/* Se connecter (Ki-tkhba ghir f Mobile) */}
-        <Link
-          to="/login"
-          className="hidden sm:block text-gray-900 hover:text-[#B31919] text-sm sm:text-base font-semibold transition duration-200"
-        >
-          Se connecter
-        </Link>
+        {/* Utilisateur connecté */}
+        {user ? (
+          <div className="flex items-center gap-2 sm:gap-3">
 
-        {/* Profil (B9a kaban f Mobile + PC) */}
-        <a
-          href="#"
-          className="bg-[#8B0015] hover:bg-[#6B0010] text-white w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition duration-200 shadow-sm shrink-0"
-        >
-          <svg
-            className="w-4 h-4 sm:w-5 sm:h-5"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
+            {/* Cercle profil */}
+            <div className="bg-[#8B0015] text-white w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition duration-200 shadow-sm shrink-0">
+              <svg
+                className="w-4 h-4 sm:w-5 sm:h-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-5 7h10a7 7 0 00-5-7z"
+                />
+              </svg>
+            </div>
+
+            {/* Nom + rôle */}
+            <div className="hidden sm:flex flex-col leading-tight">
+              <span className="text-gray-900 font-semibold text-sm sm:text-base">
+                {user.name}
+              </span>
+
+              <span className="text-gray-500 text-xs capitalize">
+                {user.role}
+              </span>
+            </div>
+
+          </div>
+        ) : (
+          /* Se connecter si personne n'est connecté */
+          <Link
+            to="/login"
+            className="hidden sm:block text-gray-900 hover:text-[#B31919] text-sm sm:text-base font-semibold transition duration-200"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-            />
-          </svg>
-        </a>
+            Se connecter
+          </Link>
+        )}
+
       </div>
     </nav>
   );
 }
+

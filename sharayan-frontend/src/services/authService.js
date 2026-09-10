@@ -9,14 +9,33 @@ export async function login(email, password) {
   return response.data;
 }
 export function logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
 }
 
 export function getUser() {
-    return JSON.parse(localStorage.getItem("user"));
+  return JSON.parse(localStorage.getItem("user"));
 }
 
 export function getToken() {
-    return localStorage.getItem("token");
+  return localStorage.getItem("token");
+}
+export async function register(
+  name,
+  telephone,
+  email,
+  password,
+  passwordConfirmation,
+  role,
+) {
+  const response = await api.post("/register", {
+    name,
+    telephone,
+    email,
+    password,
+    password_confirmation: passwordConfirmation,
+    role,
+  });
+
+  return response.data;
 }

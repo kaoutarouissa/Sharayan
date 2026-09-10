@@ -1,7 +1,37 @@
 import React from "react";
-import { Link } from "react-router-dom";
-
+import { useState } from "react";
+import { Link, useNavigate} from "react-router-dom";
+import { register } from "../services/authService";
 export default function Register() {
+  const [name, setName] = useState("");
+  const [telephone, setTelephone] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [role, setRole] = useState("donneur");
+  const [error, setError] = useState("");
+const navigate = useNavigate();
+  const handeleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      const data = await register(
+        name,
+        telephone,
+        email,
+        password,
+        passwordConfirmation,
+        role,
+      );
+      alert(data.message);
+      navigate("/login");
+    } catch (error) {
+      console.log("STATUS :", error.response?.status);
+    console.log("DATA :", error.response?.data);
+
+      setError(error.response?.data?.message || "Erreur de validation");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center py-10 px-4">
       <div className="w-full max-w-md bg-white rounded-3xl p-8 shadow-sm border border-slate-100">
@@ -17,8 +47,9 @@ export default function Register() {
         </div>
 
         {/* Formulaire */}
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+        <form onSubmit={handeleRegister} className="space-y-4">
           {/* Nom complet */}
+          {error && <p className="text-red-500">{error}</p>}
           <div>
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
               Nom complet
@@ -27,6 +58,8 @@ export default function Register() {
               <input
                 type="text"
                 name="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="Jean Dupont"
                 className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 pr-10 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none transition placeholder-slate-400"
               />
@@ -45,6 +78,8 @@ export default function Register() {
               <input
                 type="tel"
                 name="telephone"
+                value={telephone}
+                onChange={(e) => setTelephone(e.target.value)}
                 placeholder="06 12 34 56 78"
                 className="w-full bg-transparent text-slate-700 text-xs px-3 py-3 border-none outline-none placeholder-slate-400"
               />
@@ -60,6 +95,8 @@ export default function Register() {
               <input
                 type="email"
                 name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="jean.dupont@email.com"
                 className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 pr-10 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none transition placeholder-slate-400"
               />
@@ -77,6 +114,8 @@ export default function Register() {
               <input
                 type="password"
                 name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 pr-10 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none transition placeholder-slate-400"
               />
@@ -94,8 +133,10 @@ export default function Register() {
             <div className="relative">
               <input
                 type="password"
-                name="confirme_password"
+                name="password_confirmation"
                 placeholder="••••••••"
+                value={passwordConfirmation}
+                onChange={(e) => setPasswordConfirmation(e.target.value)}
                 className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 pr-10 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none transition placeholder-slate-400"
               />
               <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
@@ -110,10 +151,16 @@ export default function Register() {
               Rôle
             </label>
             <div className="relative">
-              <select name="role" className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 pr-10 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none appearance-none cursor-pointer">
+              <select
+                name="role"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                required
+                className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 pr-10 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none appearance-none cursor-pointer"
+              >
                 <option value="donneur">Donneur</option>
-                <option value="demandeur">Patient</option>
-                <option value="hopital">Admin</option>
+                <option value="patient">Patient</option>
+                <option value="admin">Admin</option>
               </select>
               <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs pointer-events-none">
                 ▼

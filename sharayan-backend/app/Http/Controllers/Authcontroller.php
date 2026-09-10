@@ -51,7 +51,7 @@ class Authcontroller extends Controller
             'role' => $request->role
         ]);
         return response()->json([
-            "massage" => 'Compte enregistré avec succès',
+            "message" => 'Compte enregistré avec succès',
             "data" => $user
 
         ], 201);

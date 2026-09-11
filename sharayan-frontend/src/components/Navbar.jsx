@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../services/authService";
@@ -20,7 +19,6 @@ export default function Navbar() {
 
   return (
     <nav className="w-full bg-white border-b border-gray-100 py-3 px-4 sm:px-8 flex items-center">
-
       {/* Logo */}
       <div className="flex items-center gap-2">
         <svg
@@ -58,7 +56,6 @@ export default function Navbar() {
 
       {/* Partie droite */}
       <div className="ml-auto flex items-center gap-3 sm:gap-8">
-
         {/* Urgence */}
         <a
           href="#"
@@ -77,24 +74,24 @@ export default function Navbar() {
           <>
             {/* Profil */}
             <div className="flex items-center gap-2 sm:gap-3">
-
               {/* Icône profil */}
-              <div className="bg-[#8B0015] text-white w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center shadow-sm">
-                <svg
-                  className="w-4 h-4 sm:w-5 sm:h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-5 7h10a7 7 0 00-5-7z"
-                  />
-                </svg>
-              </div>
-
+              <Link to="/profile">
+                <div className="bg-[#8B0015] text-white w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center shadow-sm">
+                  <svg
+                    className="w-4 h-4 sm:w-5 sm:h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-5 7h10a7 7 0 00-5-7z"
+                    />
+                  </svg>
+                </div>
+              </Link>
               {/* Nom + rôle : cachés sur téléphone */}
               <div className="hidden sm:flex flex-col leading-tight">
                 <span className="text-gray-900 font-semibold text-sm">
@@ -112,9 +109,7 @@ export default function Navbar() {
               onClick={handelLogout}
               className="text-gray-900 hover:text-[#B31919] text-sm font-semibold transition"
             >
-              <span className="hidden sm:inline">
-                Se déconnecter
-              </span>
+              <span className="hidden sm:inline">Se déconnecter</span>
 
               {/* Icône logout sur téléphone */}
               <svg

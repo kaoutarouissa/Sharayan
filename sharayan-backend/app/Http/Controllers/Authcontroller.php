@@ -65,4 +65,18 @@ class Authcontroller extends Controller
             'message' => 'Déconnexion réussie'
         ]);
     }
+    public function updateProfil(Request $request)
+    {
+        $user = $request->user();
+        $validate = $request->validate([
+            'name' => 'required|string',
+            'telephone' => 'required|string',
+            'email' => 'required|email|unique:users,email',
+        ]);
+        $user->update($validate);
+        return response()->json([
+            'message' => 'Profil modifié avec succès',
+            'user' => $user
+        ]);
+    }
 }

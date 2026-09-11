@@ -5,6 +5,7 @@ import Register from "../pages/Register";
 import AdminDashboard from "../pages/DashboardAdmin/Admin";
 import Donneur from "../pages/DashboardDonneur/demandeDon"
 import Patient from "../pages/DashboardPatient/DemandeTransffusion"
+import Profile from "../pages/Profil"
 export default function AppRoutes() {
   return (
     
@@ -15,6 +16,7 @@ export default function AppRoutes() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/donneur/dashboard" element={<Donneur />} />
         <Route path="/patient/dashboard" element={<Patient />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     
   );

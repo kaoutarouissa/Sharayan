@@ -58,8 +58,11 @@ class Authcontroller extends Controller
 
     }
 
-    public function lougout()
+    public function lougout(Request $request)
     {
-
+$request->user()->currentAccessToken()->delete();
+return response()->json([
+    'message'=>'Déconnexion réussie'
+]);
     }
 }

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 export default function Navbar() {
   const user = JSON.parse(localStorage.getItem("user"));
+  handelLogout()
 
   return (
     <nav className="w-full bg-white border-b border-gray-100 py-3 px-4 sm:px-8 md:px-10 flex items-center justify-between">
@@ -87,12 +88,18 @@ export default function Navbar() {
                 {user.role}
               </span>
             </div>
-
+ <button
+            onClick={handelLogout()}
+            className="hidden sm:block text-gray-900 hover:text-[#B31919] text-sm sm:text-base font-semibold transition duration-200"
+          >
+            Se déconnecter
+          </button>
           </div>
+          
         ) : (
           /* Se connecter si personne n'est connecté */
           <Link
-            to="/login"
+            to="/"
             className="hidden sm:block text-gray-900 hover:text-[#B31919] text-sm sm:text-base font-semibold transition duration-200"
           >
             Se connecter

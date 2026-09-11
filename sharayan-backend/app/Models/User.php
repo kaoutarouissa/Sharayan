@@ -12,7 +12,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
-     use HasApiTokens;
+    use HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -26,7 +26,10 @@ class User extends Authenticatable
         'role',
         'telephone'
     ];
-
+    public function demandeTransfusion()
+    {
+        return $this->hasMany(DemandeTransfusion::class);
+    }
     /**
      * The attributes that should be hidden for serialization.
      *

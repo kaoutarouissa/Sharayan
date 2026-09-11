@@ -4,8 +4,10 @@ export async function login(email, password) {
     email,
     password,
   });
+
   localStorage.setItem("token", response.data.token);
   localStorage.setItem("user", JSON.stringify(response.data.user));
+  console.log("Token :", response.data.token);
   return response.data;
 }
 export async function logout() {
@@ -48,7 +50,7 @@ export async function register(
 
   return response.data;
 }
-export async function Profil(data){
-  const response = await api.put("/profile", data)
+export async function Profil(data) {
+  const response = await api.put("/profile", data);
   return response.data;
 }

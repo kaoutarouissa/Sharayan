@@ -1,0 +1,17 @@
+import api from "../services/api";
+export async function createDemandeTransfusion(
+  date_transfusion,
+  hopital,
+  groupe_sanguin,
+  niveau_urgence,
+  motif,
+) {
+  const response = await api.post("/demandes-transfusion", {
+    date_transfusion,
+    hopital,
+    groupe_sanguin,
+    niveau_urgence,
+    motif,
+  });
+  return response.data;
+}

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 // use Laravel\Sanctum\HasApiTokens;
 use Laravel\Sanctum\HasApiTokens;
@@ -71,7 +72,11 @@ class Authcontroller extends Controller
         $validate = $request->validate([
             'name' => 'required|string',
             'telephone' => 'required|string',
-            'email' => 'required|email|unique:users,email',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore($user->id),
+            ],
         ]);
         $user->update($validate);
         return response()->json([

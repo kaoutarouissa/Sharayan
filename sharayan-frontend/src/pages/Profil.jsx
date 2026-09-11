@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import {Profil} from "../services/authService";
+import { Profil } from "../services/authService";
 export default function Profile() {
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -10,6 +9,7 @@ export default function Profile() {
   const [formData, setFormData] = useState({
     name: user?.name || "",
     email: user?.email || "",
+    telephone: user?.telephone || "",
   });
 
   const handleChange = (e) => {
@@ -18,7 +18,7 @@ export default function Profile() {
       [e.target.name]: e.target.value,
     });
   };
- 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -154,6 +154,21 @@ export default function Profile() {
                     type="email"
                     name="email"
                     value={formData.email}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-[#8B0015]"
+                  />
+                </div>
+
+                {/* Role non modifiable */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Téléphone
+                  </label>
+
+                  <input
+                    type="tel"
+                    name="telephone"
+                    value={formData.telephone}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-[#8B0015]"
                   />

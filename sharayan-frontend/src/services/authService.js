@@ -49,6 +49,6 @@ export async function register(
   return response.data;
 }
 export async function Profil(data){
-  const response = await api.put("/profil", data)
+  const response = await api.put("/profile", data)
   return response.data;
 }

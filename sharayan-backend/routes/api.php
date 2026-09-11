@@ -5,4 +5,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [Authcontroller::class, 'register']);
 Route::post('/login', [Authcontroller::class, 'login']);
-Route::middleware('auth:sanctume')->post('/logout',[Authcontroller::class,'lougout']);
+Route::middleware('auth:sanctum')->post('/logout', [Authcontroller::class, 'logout']);

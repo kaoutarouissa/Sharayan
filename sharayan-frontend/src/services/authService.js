@@ -8,9 +8,18 @@ export async function login(email, password) {
   localStorage.setItem("user", JSON.stringify(response.data.user));
   return response.data;
 }
-export function logout() {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
+export async function logout() {
+  try {
+    const response = await api.post("/logout");
+    return response.data;
+  } catch (error) {
+    if (![401, 419].includes(error.response?.status)) {
+      throw error;
+    }
+  } finally {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  }
 }
 
 export function getUser() {

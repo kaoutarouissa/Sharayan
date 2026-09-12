@@ -9,6 +9,7 @@ Route::post('/login', [Authcontroller::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [Authcontroller::class, 'logout']);
     Route::put('/profile', [Authcontroller::class, 'updateProfil']);
-    Route::post('/demandes-transfusion',[DemandeTransfusionController::class, 'store']);
+    Route::post('/demandes-transfusion', [DemandeTransfusionController::class, 'store']);
+    Route::get('/demandes-transfusion/historique', [DemandeTransfusionController::class, 'index']);
 
 });

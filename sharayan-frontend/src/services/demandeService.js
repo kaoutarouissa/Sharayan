@@ -15,3 +15,9 @@ export async function createDemandeTransfusion(
   });
   return response.data;
 }
+
+export async function displayDemandeTransfusion(){
+  const response =await api.get("demandes-transfusion/historique");
+  return response.data;
+
+}

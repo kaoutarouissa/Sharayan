@@ -1,7 +1,10 @@
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import { createDemandeTransfusion } from "../../services/demandeService";
-import { useState } from "react";
+import {
+  createDemandeTransfusion,
+  displayDemandeTransfusion,
+} from "../../services/demandeService";
+import { useEffect, useState } from "react";
 
 export default function Patient() {
   const [error, setError] = useState("");
@@ -13,7 +16,19 @@ export default function Patient() {
     niveau_urgence: "",
     motif: "",
   });
+  const [demande, setDemande] = useState([]);
+  useEffect(() => {
+    const getDemandes = async () => {
+      try {
+        const data = await displayDemandeTransfusion();
+        setDemande(data.demandeTransfusion);
+      } catch (error) {
+        console.error("Erreur lors du chargement :", error);
+      }
+    };
 
+    getDemandes();
+  }, []);
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -196,7 +211,7 @@ export default function Patient() {
           {/* Historique */}
           <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 overflow-x-auto">
             <h2 className="text-xl font-bold text-slate-800 mb-1">
-              Historique de mes Demandes de Sang
+              Historique de mes Demandes de Transfusion
             </h2>
 
             <p className="text-sm text-gray-400 mb-6">
@@ -209,82 +224,52 @@ export default function Patient() {
                 <tr className="text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
                   <th className="pb-3">ID DEMANDE</th>
                   <th className="pb-3">DATE</th>
-                  <th className="pb-3">PATIENT & GROUPE</th>
+                  <th className="pb-3">GROUPE & HOPITAL</th>
                   <th className="pb-3">NIVEAU D'URGENCE</th>
                   <th className="pb-3">STATUT</th>
                 </tr>
               </thead>
 
               <tbody className="divide-y divide-gray-50 text-xs">
-                <tr>
-                  <td className="py-4 font-bold text-red-600">2</td>
-
-                  <td className="py-4 text-gray-500">
-                    08 Mai 2024
-                    <br />
-                    <span className="text-[10px] text-gray-400">14:20</span>
-                  </td>
-
-                  <td className="py-4">
-                    <div className="flex items-center gap-2">
-                      <span className="bg-red-100 text-red-600 font-bold rounded-full w-7 h-7 flex items-center justify-center text-[10px]">
-                        A+
-                      </span>
-
-                      <div>
-                        <p className="font-medium text-slate-700">
-                          Mme Fatima Zahra
-                        </p>
-
-                        <p className="text-[10px] text-gray-400">
-                          Né(e) le 12/07/1990
-                        </p>
+            
+                {demande.map((item) => (
+                  <tr key={item.id}>
+                  
+                    <td className="py-4 font-bold text-red-600">
+                   
+                      {item.id}
+                    </td>
+                    <td className="py-4 text-gray-500">
+                   
+                      {item.date_transfusion}
+                    </td>
+                    <td className="py-4">
+                      
+                      <div className="flex items-center gap-2">
+                        
+                        <span className="bg-red-100 text-red-600 font-bold rounded-full w-7 h-7 flex items-center justify-center text-[10px]">
+                          
+                          {item.groupe_sanguin}
+                        </span>
+                        <div>
+                          
+                          <p className="font-medium text-slate-700">
+                            
+                            {item.hopital}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-
-                  <td className="py-4 font-medium text-red-500">Urgente</td>
-
-                  <td className="py-4 font-medium text-amber-500">
-                    En attente
-                  </td>
-                </tr>
-
-                <tr>
-                  <td className="py-4 font-bold text-red-600">3</td>
-
-                  <td className="py-4 text-gray-500">
-                    29 Avr 2024
-                    <br />
-                    <span className="text-[10px] text-gray-400">09:15</span>
-                  </td>
-
-                  <td className="py-4">
-                    <div className="flex items-center gap-2">
-                      <span className="bg-blue-100 text-blue-600 font-bold rounded-full w-7 h-7 flex items-center justify-center text-[10px]">
-                        B+
-                      </span>
-
-                      <div>
-                        <p className="font-medium text-slate-700">
-                          M. Youssef Berrada
-                        </p>
-
-                        <p className="text-[10px] text-gray-400">
-                          Né(e) le 01/11/1978
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-
-                  <td className="py-4 font-medium text-emerald-500">
-                    Prioritaire
-                  </td>
-
-                  <td className="py-4 font-medium text-emerald-600">
-                    Acceptée
-                  </td>
-                </tr>
+                    </td>
+                    <td className="py-4 font-medium text-red-500">
+                      
+                      {item.niveau_urgence}
+                    </td>
+                    <td className="py-4 font-medium text-amber-500">
+                      
+                      {item.status}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

@@ -14,6 +14,11 @@ class DemandeTransfusionController extends Controller
     public function index()
     {
         //
+        $demandeTransfusion = DemandeTransfusion::where('user_id', Auth::id())->get();
+        return response()->json([
+            'message' => 'demande affichée',
+            'demandeTransfusion' => $demandeTransfusion
+        ]);
     }
 
     /**
@@ -40,19 +45,19 @@ class DemandeTransfusionController extends Controller
         ]);
 
         $demandeTransfusion = DemandeTransfusion::create([
-            'user_id'=>Auth::id(),
+            'user_id' => Auth::id(),
             'date_transfusion' => $request->date_transfusion,
             'hopital' => $request->hopital,
-            'groupe_sanguin'=>$request->groupe_sanguin,
-            'niveau_urgence'=>$request->niveau_urgence,
-            'motif'=>$request->motif,
+            'groupe_sanguin' => $request->groupe_sanguin,
+            'niveau_urgence' => $request->niveau_urgence,
+            'motif' => $request->motif,
 
 
         ]);
         return response()->json([
             'message' => 'Demande de transfusion fait avec succès',
             'demande' => $demandeTransfusion
-        ],201);
+        ], 201);
 
     }
 

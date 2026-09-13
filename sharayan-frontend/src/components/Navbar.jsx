@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../services/authService";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+
   const user = JSON.parse(localStorage.getItem("user"));
 
   const handelLogout = async (e) => {
@@ -17,81 +19,145 @@ export default function Navbar() {
     }
   };
 
+  const espacePath =
+    user?.role === "patient"
+      ? "/patient/dashboard"
+      : user?.role === "donneur"
+        ? "/donneur/dashboard"
+        : "/admin/dashboard";
+
   return (
-    <nav className="w-full bg-white border-b border-gray-100 py-3 px-4 sm:px-8 flex items-center">
-      {/* Logo */}
-      <div className="flex items-center gap-2">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 100 100"
-          className="w-9 h-9 sm:w-11 sm:h-11"
-        >
-          <path
-            fill="#A6192E"
-            d="M50 5 C50 5 15 50 15 70 A35 35 0 0 0 85 70 C85 50 50 5 50 5 Z"
-          />
+    <nav className="w-full bg-white border-b border-gray-100 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* ================= HEADER ================= */}
+        <div className="min-h-20 flex items-center justify-between gap-4">
+          {/* ================= LOGO ================= */}
+          <Link
+            to="/"
+            onClick={() => setMenuOpen(false)}
+            className="flex items-center gap-2 shrink-0"
+          >
+            <div className="relative">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 100 100"
+                className="w-9 h-9 sm:w-11 sm:h-11"
+              >
+                <path
+                  fill="#A6192E"
+                  d="M50 5 C50 5 15 50 15 70 A35 35 0 0 0 85 70 C85 50 50 5 50 5 Z"
+                />
 
-          <path
-            fill="none"
-            stroke="#FFFFFF"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M20 65 L35 65 L40 55 L45 75 L52 48 L58 78 L63 60 L68 65 L80 65"
-          />
-        </svg>
+                <path
+                  fill="none"
+                  stroke="#FFFFFF"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M20 65 L35 65 L40 55 L45 75 L52 48 L58 78 L63 60 L68 65 L80 65"
+                />
+              </svg>
+            </div>
 
-        <div className="flex flex-col">
-          <span className="text-[#A6192E] font-bold text-base sm:text-xl leading-tight">
-            Sharayan
-          </span>
+            <div className="flex flex-col leading-none">
+              <span className="text-[#A6192E] font-bold text-lg sm:text-xl">
+                Sharayan
+              </span>
 
-          <span className="text-[7px] sm:text-[9px] text-gray-500 font-bold tracking-widest uppercase">
-            TRANSFUSION
-            <br />
-            SANGUINE
-          </span>
-        </div>
-      </div>
+              <span className="text-[7px] sm:text-[8px] text-gray-500 font-bold tracking-[0.18em] mt-1">
+                TRANSFUSION
+                <br />
+                SANGUINE
+              </span>
+            </div>
+          </Link>
 
-      {/* Partie droite */}
-      <div className="ml-auto flex items-center gap-3 sm:gap-8">
-        {/* Urgence */}
-        <a
-          href="#"
-          className="text-[#B31919] hover:text-[#8B1212] text-xs sm:text-base font-semibold text-center leading-tight"
-        >
-          <span className="sm:hidden">Urgence</span>
+          {/* ================= DESKTOP ================= */}
+          <div className="hidden md:flex items-center ml-auto">
+            {/* Liens principaux */}
+            <div className="flex items-center gap-8 lg:gap-10">
+              {/* Urgence */}
+              <Link
+                to="/urgence"
+                className="text-[#B31919] hover:text-[#8B1212] text-sm lg:text-base font-semibold leading-tight text-center transition"
+              >
+                Espace
+                <br />
+                d'urgence
+              </Link>
 
-          <span className="hidden sm:inline">
-            Espace
-            <br />
-            d'urgence
-          </span>
-        </a>
+              {user && (
+                <>
+                  {/* Mon espace */}
+                  <Link
+                    to={espacePath}
+                    className="text-gray-800 hover:text-[#B31919] text-sm lg:text-base font-semibold whitespace-nowrap transition"
+                  >
+                    Mon espace
+                  </Link>
 
-        {user ? (
-          <>
-            {/* Mon espace */}
-            <Link
-              to={
-                user.role === "patient"
-                  ? "/patient/dashboard"
-                  : user.role === "donneur"
-                    ? "/donneur/dashboard"
-                    : "/admin/dashboard"
-              }
-              className="text-gray-900 hover:text-[#B31919] text-sm font-semibold transition"
-            >
-              Mon espace
-            </Link>
-            {/* Profil */}
-            <div className="flex items-center gap-2 sm:gap-3">
-              {/* Icône profil */}
+                  {/* Profil */}
+                  <Link to="/profile" className="flex items-center gap-3 group">
+                    <div className="bg-[#8B0015] text-white w-10 h-10 rounded-full flex items-center justify-center shadow-sm group-hover:bg-[#A6192E] transition shrink-0">
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-5 7h10a7 7 0 00-5-7z"
+                        />
+                      </svg>
+                    </div>
+
+                    <div className="flex flex-col leading-tight min-w-[85px]">
+                      <span className="text-gray-900 font-semibold text-sm truncate max-w-[100px]">
+                        {user.name}
+                      </span>
+
+                      <span className="text-gray-500 text-xs capitalize">
+                        {user.role}
+                      </span>
+                    </div>
+                  </Link>
+                </>
+              )}
+            </div>
+
+            {/* Déconnexion */}
+            {user && (
+              <div className="ml-8 lg:ml-10 pl-8 lg:pl-10  ">
+                <button
+                  onClick={handelLogout}
+                  className="text-gray-800 hover:text-[#B31919] text-sm lg:text-base font-semibold whitespace-nowrap transition"
+                >
+                  Se déconnecter
+                </button>
+              </div>
+            )}
+
+            {/* Connexion */}
+            {!user && (
+              <Link
+                to="/login"
+                className="ml-8 bg-[#8B0015] hover:bg-[#A6192E] text-white px-5 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition"
+              >
+                Se connecter
+              </Link>
+            )}
+          </div>
+
+          {/* ================= MOBILE ================= */}
+          <div className="md:hidden flex items-center gap-2 shrink-0">
+            {user && (
               <Link to="/profile">
-                <div className="bg-[#8B0015] text-white w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center shadow-sm">
+                <div className="bg-[#8B0015] text-white w-10 h-10 rounded-full flex items-center justify-center shadow-sm">
                   <svg
-                    className="w-4 h-4 sm:w-5 sm:h-5"
+                    className="w-5 h-5"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
@@ -105,54 +171,111 @@ export default function Navbar() {
                   </svg>
                 </div>
               </Link>
-              {/* Nom + rôle : cachés sur téléphone */}
-              <div className="hidden sm:flex flex-col leading-tight">
-                <span className="text-gray-900 font-semibold text-sm">
-                  {user.name}
-                </span>
+            )}
 
-                <span className="text-gray-500 text-xs capitalize">
-                  {user.role}
-                </span>
-              </div>
-            </div>
-
-            {/* Déconnexion */}
+            {/* Burger */}
             <button
-              onClick={handelLogout}
-              className="text-gray-900 hover:text-[#B31919] text-sm font-semibold transition"
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gray-50 transition"
+              aria-label="Menu"
             >
-              <span className="hidden sm:inline">Se déconnecter</span>
-
-              {/* Icône logout sur téléphone */}
-              <svg
-                className="sm:hidden w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15 12H3m0 0l4-4m-4 4l4 4"
-                />
-
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 5V4a2 2 0 012-2h5a2 2 0 012 2v16a2 2 0 01-2 2h-5a2 2 0 01-2-2v-1"
-                />
-              </svg>
+              {menuOpen ? (
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 6l12 12M18 6L6 18"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />
+                </svg>
+              )}
             </button>
-          </>
-        ) : (
-          <Link
-            to="/login"
-            className="text-gray-900 hover:text-[#B31919] text-sm font-semibold"
-          >
-            Se connecter
-          </Link>
+          </div>
+        </div>
+
+        {/* ================= MOBILE MENU ================= */}
+        {menuOpen && (
+          <div className="md:hidden border-t border-gray-100 py-4 space-y-2">
+            {/* Urgence */}
+            <Link
+              to="/urgence"
+              onClick={() => setMenuOpen(false)}
+              className="block px-4 py-3 rounded-xl text-[#B31919] font-semibold hover:bg-red-50 transition"
+            >
+              Espace d'urgence
+            </Link>
+
+            {user ? (
+              <>
+                {/* Mon espace */}
+                <Link
+                  to={espacePath}
+                  onClick={() => setMenuOpen(false)}
+                  className="block px-4 py-3 rounded-xl text-gray-800 font-semibold hover:bg-gray-50 transition"
+                >
+                  Mon espace
+                </Link>
+
+                {/* Profil */}
+                <Link
+                  to="/profile"
+                  onClick={() => setMenuOpen(false)}
+                  className="block px-4 py-3 rounded-xl text-gray-800 font-semibold hover:bg-gray-50 transition"
+                >
+                  Mon profil
+                </Link>
+
+                {/* Infos utilisateur */}
+                <div className="px-4 py-3 bg-gray-50 rounded-xl">
+                  <p className="text-sm font-semibold text-gray-900">
+                    {user.name}
+                  </p>
+
+                  <p className="text-xs text-gray-500 capitalize mt-1">
+                    {user.role}
+                  </p>
+                </div>
+
+                {/* Déconnexion */}
+                <button
+                  onClick={(e) => {
+                    handelLogout(e);
+                    setMenuOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-3 rounded-xl text-[#B31919] font-semibold hover:bg-red-50 transition"
+                >
+                  Se déconnecter
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="block text-center bg-[#8B0015] hover:bg-[#A6192E] text-white px-5 py-3 rounded-xl font-semibold transition"
+              >
+                Se connecter
+              </Link>
+            )}
+          </div>
         )}
       </div>
     </nav>

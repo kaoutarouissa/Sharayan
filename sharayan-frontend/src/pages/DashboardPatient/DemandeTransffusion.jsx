@@ -178,78 +178,125 @@ export default function Patient() {
           </div>
 
           {/* Historique */}
-          <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100 overflow-x-auto">
-            <h2 className="text-xl font-bold text-slate-800 mb-1">
+          <div className="bg-white rounded-xl p-4 sm:p-6 lg:p-8 shadow-sm border border-gray-100">
+            <h2 className="text-lg sm:text-xl font-bold text-slate-800 mb-1">
               Historique de mes Demandes de Transfusion
             </h2>
 
-            <p className="text-sm text-gray-400 mb-6">
+            <p className="text-xs sm:text-sm text-gray-400 mb-5 sm:mb-6">
               Suivi en temps réel de vos demandes transmises aux centres
               régionaux
             </p>
 
-            <table className="w-full text-left border-collapse min-w-[600px]">
-              <thead>
-                <tr className="text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                  <th className="pb-3">ID DEMANDE</th>
-                  <th className="pb-3">DATE</th>
-                  <th className="pb-3">GROUPE & HOPITAL</th>
-                  <th className="pb-3">NIVEAU D'URGENCE</th>
-                  <th className="pb-3">STATUT</th>
-                </tr>
-              </thead>
+            {/* Tableau responsive */}
+            <div className="w-full overflow-x-auto">
+              <table className="w-full min-w-[700px] text-left border-collapse">
+                <thead>
+                  <tr className="text-[10px] sm:text-[11px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">
+                    <th className="pb-3 px-2 sm:px-3">ID DEMANDE</th>
 
-              <tbody className="divide-y divide-gray-50 text-xs">
-                {demande.map((item) => (
-                  <tr key={item.id}>
-                    <td className="py-4 font-bold text-red-600">{item.id}</td>
-                    <td className="py-4 text-gray-500">
-                      {item.date_transfusion}
-                    </td>
-                    <td className="py-4">
-                      <div className="flex items-center gap-2">
-                        <span className="bg-red-100 text-red-600 font-bold rounded-full w-7 h-7 flex items-center justify-center text-[10px]">
-                          {item.groupe_sanguin}
-                        </span>
-                        <div>
-                          <p className="font-medium text-slate-700">
-                            {item.hopital}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-4 font-medium text-red-500">
-                      {item.niveau_urgence}
-                    </td>
-                    <td className="py-4 font-medium text-amber-500">
-                      {item.status}
-                      {/* Actions seulement si en attente */}
-                      {item.status === "en_attente" && (
-                        <>
-                          {/* Modifier */}
-                          <button
-                            onClick={() => handleEdit(item)}
-                            className="text-blue-500 hover:text-blue-700"
-                            title="Modifier"
-                          >
-                            ✏️
-                          </button>
+                    <th className="pb-3 px-2 sm:px-3">DATE</th>
 
-                          {/* Annuler */}
-                          <button
-                            onClick={() => handleCancel(item.id)}
-                            className="text-red-500 hover:text-red-700"
-                            title="Annuler"
-                          >
-                            🗑️
-                          </button>
-                        </>
-                      )}
-                    </td>
+                    <th className="pb-3 px-2 sm:px-3">GROUPE & HOPITAL</th>
+
+                    <th className="pb-3 px-2 sm:px-3">NIVEAU D'URGENCE</th>
+
+                    <th className="pb-3 px-2 sm:px-3">STATUT</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody className="divide-y divide-gray-50 text-xs sm:text-sm">
+                  {demande.map((item) => (
+                    <tr key={item.id}>
+                      {/* ID */}
+                      <td className="py-4 px-2 sm:px-3 font-bold text-red-600 whitespace-nowrap">
+                        {item.id}
+                      </td>
+
+                      {/* DATE */}
+                      <td className="py-4 px-2 sm:px-3 text-gray-500 whitespace-nowrap">
+                        {item.date_transfusion}
+                      </td>
+
+                      {/* GROUPE + HOPITAL */}
+                      <td className="py-4 px-2 sm:px-3">
+                        <div className="flex items-center gap-2 min-w-[180px]">
+                          <span className="bg-red-100 text-red-600 font-bold rounded-full w-7 h-7 flex items-center justify-center text-[10px] shrink-0">
+                            {item.groupe_sanguin}
+                          </span>
+
+                          <div className="min-w-0">
+                            <p className="font-medium text-slate-700 truncate max-w-[180px] sm:max-w-[220px]">
+                              {item.hopital}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* URGENCE */}
+                      <td
+                        className={`py-4 px-2 sm:px-3 font-medium whitespace-nowrap ${
+                          item.niveau_urgence === "urgente"
+                            ? "text-red-500"
+                            : item.niveau_urgence === "normale"
+                              ? "text-green-500"
+                              : item.niveau_urgence === "prioritaire"
+                                ? "text-orange-500"
+                                : "text-gray-500"
+                        }`}
+                      >
+                        {item.niveau_urgence}
+                      </td>
+
+                      {/* STATUT + ACTIONS */}
+                      <td className="py-4 px-2 sm:px-3">
+                        <div className="flex items-center gap-2 whitespace-nowrap">
+                          {/* Statut */}
+                          <span
+                            className={`font-medium ${
+                              item.status === "en_attente"
+                                ? "text-amber-500"
+                                : item.status === "acceptee"
+                                  ? "text-green-500"
+                                  : item.status === "terminee"
+                                    ? "text-blue-950"
+                                    : item.status === "refusee"
+                                      ? "text-red-500"
+                                      : "text-gray-500"
+                            }`}
+                          >
+                            {item.status}
+                          </span>
+
+                          {/* Actions */}
+                          {item.status === "en_attente" && (
+                            <div className="flex items-center gap-2 ml-1">
+                              {/* Modifier */}
+                              <button
+                                onClick={() => handleEdit(item)}
+                                className="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-50 text-blue-500 hover:bg-blue-100 hover:text-blue-700 transition shrink-0"
+                                title="Modifier"
+                              >
+                                ✏️
+                              </button>
+
+                              {/* Annuler */}
+                              <button
+                                onClick={() => handleCancel(item.id)}
+                                className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-700 transition shrink-0"
+                                title="Annuler"
+                              >
+                                ❌
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

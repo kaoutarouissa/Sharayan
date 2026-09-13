@@ -26,6 +26,7 @@ class User extends Authenticatable
         'role',
         'telephone',
         'groupe_sanguin',
+        'date_naissance',
     ];
     public function demandeTransfusion()
     {

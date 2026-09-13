@@ -44,6 +44,7 @@ class Authcontroller extends Controller
             'password' => 'required|string|min:7|confirmed',
             'role' => 'required|in:admin,patient,donneur',
             'groupe_sanguin' => 'required|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+            'date_naissance' => 'required|date',
         ]);
         $user = User::create([
             'name' => $request->name,
@@ -52,6 +53,7 @@ class Authcontroller extends Controller
             'telephone' => $request->telephone,
             'role' => $request->role,
             'groupe_sanguin' => $request->groupe_sanguin,
+            'date_naissance' => $request->date_naissance,
         ]);
         return response()->json([
             "message" => 'Compte enregistré avec succès',
@@ -79,6 +81,7 @@ class Authcontroller extends Controller
                 'email',
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
+             'date_naissance' => 'required|date',
         ]);
         $user->update($validate);
         return response()->json([

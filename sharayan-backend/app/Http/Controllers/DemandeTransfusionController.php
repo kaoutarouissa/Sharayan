@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\DemandeTransfusion;
+use Date;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date as FacadesDate;
 
 class DemandeTransfusionController extends Controller
 {
@@ -37,7 +39,7 @@ class DemandeTransfusionController extends Controller
         //
         $request->validate([
 
-            'date_transfusion' => 'required|date',
+            'date_transfusion' => 'required|date|after_or_equal:today',
             'hopital' => 'required|string|max:255',
             'niveau_urgence' => 'required|in:urgente,prioritaire,normale',
             'motif' => 'required|string|max:1000',
@@ -49,6 +51,13 @@ class DemandeTransfusionController extends Controller
             ], 422);
         }
 
+        $today = now()->toDateString();
+        if ($request->date_transfusion < $today) {
+            return response()->json([
+                'message' => 'La date de transfusion ne peut pas être dans le passé.',
+            ], 422);
+        }
+        ;
         $demandeTransfusion = DemandeTransfusion::create([
             'user_id' => Auth::id(),
             'date_transfusion' => $request->date_transfusion,
@@ -80,6 +89,7 @@ class DemandeTransfusionController extends Controller
     public function edit(DemandeTransfusion $demandeTransfusion)
     {
         //
+        // DemandeTransfusion::
     }
 
     /**
@@ -88,6 +98,19 @@ class DemandeTransfusionController extends Controller
     public function update(Request $request, DemandeTransfusion $demandeTransfusion)
     {
         //
+        $demande = $request->validate([
+            "date_transfusion" => 'required|date|after_or_equal:today',
+            'hopital' => 'required|string',
+            "motif" => 'required|string',
+            'niveau_urgence' => 'required|string'
+        ]);
+
+        $demandeTransfusion->update($demande);
+        return response()->json([
+            "message" => "Demande de transfusion modifiée avec succès",
+            "demande" => $demandeTransfusion
+        ], 200);
+
     }
 
     /**
@@ -96,5 +119,10 @@ class DemandeTransfusionController extends Controller
     public function destroy(DemandeTransfusion $demandeTransfusion)
     {
         //
+        $demandeTransfusion->delete();
+        return response()->json([
+            'message' => 'demande supprimée',
+            'demande' => $demandeTransfusion
+        ], 200);
     }
 }

@@ -72,6 +72,19 @@ export default function Navbar() {
 
         {user ? (
           <>
+            {/* Mon espace */}
+            <Link
+              to={
+                user.role === "patient"
+                  ? "/patient/dashboard"
+                  : user.role === "donneur"
+                    ? "/donneur/dashboard"
+                    : "/admin/dashboard"
+              }
+              className="text-gray-900 hover:text-[#B31919] text-sm font-semibold transition"
+            >
+              Mon espace
+            </Link>
             {/* Profil */}
             <div className="flex items-center gap-2 sm:gap-3">
               {/* Icône profil */}

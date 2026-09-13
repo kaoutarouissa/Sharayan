@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { register } from "../services/authService";
 export default function Register() {
   const [name, setName] = useState("");
@@ -9,8 +9,9 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [role, setRole] = useState("donneur");
+  const [groupe_sanguin, setGroupSanguin] = useState("");
   const [error, setError] = useState("");
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const handeleRegister = async (e) => {
     e.preventDefault();
     try {
@@ -21,12 +22,13 @@ const navigate = useNavigate();
         password,
         passwordConfirmation,
         role,
+        groupe_sanguin,
       );
       alert(data.message);
       navigate("/login");
     } catch (error) {
       console.log("STATUS :", error.response?.status);
-    console.log("DATA :", error.response?.data);
+      console.log("DATA :", error.response?.data);
 
       setError(error.response?.data?.message || "Erreur de validation");
     }
@@ -103,6 +105,35 @@ const navigate = useNavigate();
               <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
                 @
               </span>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-800 mb-1.5">
+              Group Sanguin
+            </label>
+            <div className="relative">
+              <select
+                name="groupe_sanguin"
+                value={groupe_sanguin}
+                onChange={(e) => setGroupSanguin(e.target.value)}
+                required
+                className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none transition"
+              >
+                <option value="" disabled>
+                  Sélectionner votre groupe sanguin
+                </option>
+
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+              </select>
+              
             </div>
           </div>
           {/* Mot de passe */}

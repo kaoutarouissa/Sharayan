@@ -39,16 +39,21 @@ class DemandeTransfusionController extends Controller
 
             'date_transfusion' => 'required|date',
             'hopital' => 'required|string|max:255',
-            'groupe_sanguin' => 'required|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
             'niveau_urgence' => 'required|in:urgente,prioritaire,normale',
             'motif' => 'required|string|max:1000',
         ]);
+        $user = Auth::user();
+        if (!$user->groupe_sanguin) {
+            return response()->json([
+                'message' => 'Le groupe sanguin du patient est manquant.',
+            ], 422);
+        }
 
         $demandeTransfusion = DemandeTransfusion::create([
             'user_id' => Auth::id(),
             'date_transfusion' => $request->date_transfusion,
             'hopital' => $request->hopital,
-            'groupe_sanguin' => $request->groupe_sanguin,
+            'groupe_sanguin' => $user->groupe_sanguin,
             'niveau_urgence' => $request->niveau_urgence,
             'motif' => $request->motif,
 

@@ -38,6 +38,7 @@ export async function register(
   password,
   passwordConfirmation,
   role,
+  groupe_sanguin,
 ) {
   const response = await api.post("/register", {
     name,
@@ -46,6 +47,7 @@ export async function register(
     password,
     password_confirmation: passwordConfirmation,
     role,
+    groupe_sanguin,
   });
 
   return response.data;

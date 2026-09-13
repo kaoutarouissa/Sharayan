@@ -43,13 +43,15 @@ class Authcontroller extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:7|confirmed',
             'role' => 'required|in:admin,patient,donneur',
+            'groupe_sanguin' => 'required|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
         ]);
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'telephone' => $request->telephone,
-            'role' => $request->role
+            'role' => $request->role,
+            'groupe_sanguin' => $request->groupe_sanguin,
         ]);
         return response()->json([
             "message" => 'Compte enregistré avec succès',

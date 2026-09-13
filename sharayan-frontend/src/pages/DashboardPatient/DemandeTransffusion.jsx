@@ -12,22 +12,21 @@ export default function Patient() {
   const [formData, setFormData] = useState({
     date_transfusion: "",
     hopital: "",
-    groupe_sanguin: "",
     niveau_urgence: "",
     motif: "",
   });
   const [demande, setDemande] = useState([]);
-  useEffect(() => {
-    const getDemandes = async () => {
-      try {
-        const data = await displayDemandeTransfusion();
-        setDemande(data.demandeTransfusion);
-      } catch (error) {
-        console.error("Erreur lors du chargement :", error);
-      }
-    };
+  const loadDemandes = async () => {
+    try {
+      const data = await displayDemandeTransfusion();
+      setDemande(data.demandeTransfusion);
+    } catch (error) {
+      console.error("Erreur lors du chargement :", error);
+    }
+  };
 
-    getDemandes();
+  useEffect(() => {
+    loadDemandes();
   }, []);
   const handleChange = (e) => {
     setFormData({
@@ -44,10 +43,10 @@ export default function Patient() {
       const data = await createDemandeTransfusion(
         formData.date_transfusion,
         formData.hopital,
-        formData.groupe_sanguin,
         formData.niveau_urgence,
         formData.motif,
       );
+      await loadDemandes();
       setSuccess("Demande de transfusion ajoutée avec succès !");
       setError("");
       console.log("Demande créée :", data);
@@ -56,7 +55,6 @@ export default function Patient() {
       setFormData({
         date_transfusion: "",
         hopital: "",
-        groupe_sanguin: "",
         niveau_urgence: "",
         motif: "",
       });
@@ -145,35 +143,6 @@ export default function Patient() {
                   />
                 </div>
 
-                {/* Groupe sanguin */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Groupe Sanguin recherché{" "}
-                    <span className="text-red-500">*</span>
-                  </label>
-
-                  <select
-                    name="groupe_sanguin"
-                    value={formData.groupe_sanguin}
-                    onChange={handleChange}
-                    required
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500"
-                  >
-                    <option value="" disabled>
-                      Sélectionner un groupe
-                    </option>
-
-                    <option value="A+">A+</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B-">B-</option>
-                    <option value="AB+">AB+</option>
-                    <option value="AB-">AB-</option>
-                    <option value="O+">O+</option>
-                    <option value="O-">O-</option>
-                  </select>
-                </div>
-
                 {/* Niveau urgence */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -231,42 +200,51 @@ export default function Patient() {
               </thead>
 
               <tbody className="divide-y divide-gray-50 text-xs">
-            
                 {demande.map((item) => (
                   <tr key={item.id}>
-                  
-                    <td className="py-4 font-bold text-red-600">
-                   
-                      {item.id}
-                    </td>
+                    <td className="py-4 font-bold text-red-600">{item.id}</td>
                     <td className="py-4 text-gray-500">
-                   
                       {item.date_transfusion}
                     </td>
                     <td className="py-4">
-                      
                       <div className="flex items-center gap-2">
-                        
                         <span className="bg-red-100 text-red-600 font-bold rounded-full w-7 h-7 flex items-center justify-center text-[10px]">
-                          
                           {item.groupe_sanguin}
                         </span>
                         <div>
-                          
                           <p className="font-medium text-slate-700">
-                            
                             {item.hopital}
                           </p>
                         </div>
                       </div>
                     </td>
                     <td className="py-4 font-medium text-red-500">
-                      
                       {item.niveau_urgence}
                     </td>
                     <td className="py-4 font-medium text-amber-500">
-                      
                       {item.status}
+                      {/* Actions seulement si en attente */}
+                      {item.status === "en_attente" && (
+                        <>
+                          {/* Modifier */}
+                          <button
+                            onClick={() => handleEdit(item)}
+                            className="text-blue-500 hover:text-blue-700"
+                            title="Modifier"
+                          >
+                            ✏️
+                          </button>
+
+                          {/* Annuler */}
+                          <button
+                            onClick={() => handleCancel(item.id)}
+                            className="text-red-500 hover:text-red-700"
+                            title="Annuler"
+                          >
+                            🗑️
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}

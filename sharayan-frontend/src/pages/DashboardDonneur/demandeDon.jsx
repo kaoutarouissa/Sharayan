@@ -1,45 +1,61 @@
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import { createDemandDon } from "../../services/demandeService";
+import {
+  createDemandDon,
+  displayDemandeDon,
+} from "../../services/demandeService";
 import { getUser } from "../../services/authService";
 import { useState, React, useEffect } from "react";
+
 export default function Donneur() {
   const [demande, setDemande] = useState({
     hopital: "",
     date_prelevement: "",
   });
+
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState("");
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
+  const [historique, setHistorique] = useState([]);
+
   const handelsubmit = async (e) => {
     setMessage("");
     setSuccess("");
     setError("");
     e.preventDefault();
+
     try {
       console.log(demande);
 
-      const data = await createDemandDon(demande);
+      await createDemandDon(demande);
+
+      const historiqueData = await displayDemandeDon();
+      setHistorique(historiqueData.demande);
+
       setSuccess("Demande de don ajoutée avec succès !");
+
       setDemande({
         date_prelevement: "",
         hopital: "",
       });
     } catch (error) {
       console.error("Error : ", error);
+
       setError(
         error.response?.data?.message ||
-          "Erreur lors de l'envoi de la demande.",
+          "Erreur lors de l'envoi de la demande."
       );
     }
   };
-  const handleChange = async (e) => {
+
+  const handleChange = (e) => {
     setDemande({
       ...demande,
       [e.target.name]: e.target.value,
     });
   };
+
   useEffect(() => {
     const getUserData = async () => {
       try {
@@ -56,11 +72,24 @@ export default function Donneur() {
     getUserData();
   }, []);
 
+  useEffect(() => {
+    const getHistorique = async () => {
+      try {
+        const data = await displayDemandeDon();
+        setHistorique(data.demande);
+      } catch (error) {
+        console.error("Erreur historique :", error);
+      }
+    };
+
+    getHistorique();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       {/* Header */}
-
       <Navbar />
+
       {/* Main Content */}
       <main className="max-w-4xl mx-auto w-full p-4 my-6">
         {/* Formulaire Card */}
@@ -68,6 +97,7 @@ export default function Donneur() {
           <h2 className="text-red-600 font-bold text-lg tracking-wide uppercase mb-1">
             Formulaire du don de Sang
           </h2>
+
           <p className="text-gray-500 text-sm mb-6">
             Votre geste sauve jusqu'à trois vies. Remplissez ce formulaire pour
             planifier votre rendez-vous de don.
@@ -85,19 +115,29 @@ export default function Donneur() {
                 {message}
               </p>
             )}
-            {/* Section 01 : Informations Personnelles (Automatiques) */}
+
+            {error && (
+              <p className="text-red-500 text-sm bg-red-50 p-3 rounded-lg">
+                {error}
+              </p>
+            )}
+
+            {/* Section 01 : Informations Personnelles */}
             <div>
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 border-b pb-1 border-gray-200">
                 01. INFORMATIONS DU DONNEUR (PRÉ-REMPLIES)
               </h3>
+
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-semibold mb-1">
                     Nom
                   </label>
+
                   <input
                     type="text"
-                    placeholder={user ? user.name : "Nom du donneur"}
+                    value={user?.name || ""}
+                    placeholder="Nom du donneur"
                     readOnly
                     className="w-full border border-gray-200 bg-gray-100 text-gray-500 rounded px-3 py-2 text-sm cursor-not-allowed"
                   />
@@ -107,10 +147,11 @@ export default function Donneur() {
                   <label className="block text-xs font-semibold mb-1">
                     Téléphone
                   </label>
+
                   <input
                     type="text"
-                    value=""
-                    placeholder={user ? user.telephone : ""}
+                    value={user?.telephone || ""}
+                    placeholder="Téléphone du donneur"
                     readOnly
                     className="w-full border border-gray-200 bg-gray-100 text-gray-500 rounded px-3 py-2 text-sm cursor-not-allowed"
                   />
@@ -118,17 +159,19 @@ export default function Donneur() {
               </div>
             </div>
 
-            {/* Section 02 : Détails du Don & Rendez-vous */}
+            {/* Section 02 : Détails du Don */}
             <div>
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 border-b pb-1 border-gray-200">
                 02. DÉTAILS DU RENDEZ-VOUS & GROUPE SANGUIN
               </h3>
+
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {/* Choix du Centre / Hôpital */}
+                {/* Hôpital */}
                 <div>
                   <label className="block text-xs font-semibold mb-1">
                     Centre / Hôpital *
                   </label>
+
                   <input
                     type="text"
                     name="hopital"
@@ -138,11 +181,12 @@ export default function Donneur() {
                   />
                 </div>
 
-                {/* Date de Prélèvement */}
+                {/* Date */}
                 <div>
                   <label className="block text-xs font-semibold mb-1">
-                    Date prélèvemen *
+                    Date prélèvement *
                   </label>
+
                   <input
                     type="date"
                     name="date_prelevement"
@@ -154,7 +198,7 @@ export default function Donneur() {
               </div>
             </div>
 
-            {/* Bouton d'envoi */}
+            {/* Bouton */}
             <button
               type="submit"
               className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded text-sm transition"
@@ -164,21 +208,19 @@ export default function Donneur() {
           </form>
         </section>
 
-        {/* Historique Card */}
+        {/* Historique */}
         <section className="bg-white p-6 md:p-8 rounded-lg shadow-sm border border-gray-100">
           <div className="flex justify-between items-center mb-4">
             <div>
               <h3 className="font-bold text-gray-800 text-base">
                 Historique de mes Dons de Sang
               </h3>
+
               <p className="text-gray-500 text-xs">
                 Retrouvez le suivi en temps réel de vos démarches et rendez-vous
                 médicaux.
               </p>
             </div>
-            <span className="bg-gray-100 border border-gray-200 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full">
-              3 dons
-            </span>
           </div>
 
           <div className="overflow-x-auto">
@@ -192,64 +234,53 @@ export default function Donneur() {
                   <th className="p-3">STATUT</th>
                 </tr>
               </thead>
+
               <tbody className="divide-y divide-gray-100">
-                <tr className="hover:bg-gray-50">
-                  <td className="p-3 font-bold">#DS-2026-084</td>
-                  <td className="p-3 text-gray-600">12 Avril 2026 • 10h30</td>
-                  <td className="p-3">
-                    <div className="font-medium text-gray-800">
-                      Maison du Don Paris Nation
-                    </div>
-                  </td>
-                  <td className="p-3 font-bold">O+</td>
-                  <td className="p-3">
-                    <span className="text-xs font-bold px-2.5 py-1 rounded bg-blue-100 text-blue-800">
-                      Confirmé
-                    </span>
-                  </td>
-                </tr>
-                <tr className="hover:bg-gray-50">
-                  <td className="p-3 font-bold">#DS-2026-021</td>
-                  <td className="p-3 text-gray-600">24 Janv. 2026 • 14h15</td>
-                  <td className="p-3">
-                    <div className="font-medium text-gray-800">
-                      Collecte Mobile Place de la République
-                    </div>
-                    <div className="text-xs text-gray-400">
-                      Bus Transfusion 02
-                    </div>
-                  </td>
-                  <td className="p-3 font-bold">O+</td>
-                  <td className="p-3">
-                    <span className="text-xs font-bold px-2.5 py-1 rounded bg-green-100 text-green-800">
-                      Effectué
-                    </span>
-                  </td>
-                </tr>
-                <tr className="hover:bg-gray-50">
-                  <td className="p-3 font-bold">#DS-2025-412</td>
-                  <td className="p-3 text-gray-600">15 Sept. 2025 • 09h00</td>
-                  <td className="p-3">
-                    <div className="font-medium text-gray-800">
-                      Centre Régional de Transfusion Nord
-                    </div>
-                    <div className="text-xs text-gray-400">
-                      Service Prélèvements
-                    </div>
-                  </td>
-                  <td className="p-3 font-bold">O+</td>
-                  <td className="p-3">
-                    <span className="text-xs font-bold px-2.5 py-1 rounded bg-green-100 text-green-800">
-                      Effectué
-                    </span>
-                  </td>
-                </tr>
+                {historique.length > 0 ? (
+                  historique.map((demande) => (
+                    <tr key={demande.id} className="hover:bg-gray-50">
+                      <td className="p-3 font-bold">
+                        #{demande.id}
+                      </td>
+
+                      <td className="p-3 text-gray-600">
+                        {demande.date_prelevement}
+                      </td>
+
+                      <td className="p-3">
+                        <div className="font-medium text-gray-800">
+                          {demande.hopital}
+                        </div>
+                      </td>
+
+                      <td className="p-3 font-bold">
+                        {demande.groupe_sanguin || "-"}
+                      </td>
+
+                      <td className="p-3">
+                        <span className="text-xs font-bold px-2.5 py-1 rounded bg-blue-100 text-blue-800">
+                          {demande.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="5"
+                      className="p-6 text-center text-gray-400"
+                    >
+                      Aucune demande de don pour le moment.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
         </section>
       </main>
 
+      {/* Modification demande */}
       <section className="max-w-4xl mx-auto w-full px-4 pb-8">
         <div className="bg-white p-6 md:p-8 rounded-xl shadow-sm border border-red-100 border-l-4 border-l-red-600">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-7">
@@ -257,13 +288,16 @@ export default function Donneur() {
               <p className="text-[11px] font-bold tracking-[0.18em] text-red-600 uppercase mb-2">
                 Demande #DS-2026-084
               </p>
+
               <h2 className="text-gray-900 font-bold text-xl mb-1">
                 Modifier ma demande de don
               </h2>
+
               <p className="text-gray-500 text-sm">
                 Modifiez le centre ou la date de votre rendez-vous.
               </p>
             </div>
+
             <span className="self-start bg-red-50 border border-red-200 text-red-700 text-xs font-bold px-3 py-1.5 rounded-full">
               En attente
             </span>
@@ -274,11 +308,13 @@ export default function Donneur() {
               <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 border-b pb-2 border-gray-200">
                 01. Informations du donneur
               </h3>
+
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1.5">
                     Nom & Prénom
                   </label>
+
                   <input
                     type="text"
                     value="Thomas Dupont"
@@ -286,10 +322,12 @@ export default function Donneur() {
                     className="w-full border border-gray-200 bg-gray-50 text-gray-500 rounded-lg px-3 py-2.5 text-sm cursor-not-allowed"
                   />
                 </div>
+
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1.5">
                     Téléphone
                   </label>
+
                   <input
                     type="text"
                     value="+212 600-000000"
@@ -297,10 +335,12 @@ export default function Donneur() {
                     className="w-full border border-gray-200 bg-gray-50 text-gray-500 rounded-lg px-3 py-2.5 text-sm cursor-not-allowed"
                   />
                 </div>
+
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1.5">
                     Groupe sanguin
                   </label>
+
                   <input
                     type="text"
                     value="Inconnu (À tester sur place)"
@@ -315,12 +355,14 @@ export default function Donneur() {
               <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 border-b pb-2 border-gray-200">
                 02. Nouvelles disponibilités
               </h3>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1.5">
                     Changer de centre / hôpital{" "}
                     <span className="text-red-500">*</span>
                   </label>
+
                   <select
                     defaultValue="maison_don"
                     className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-500 bg-white"
@@ -339,6 +381,7 @@ export default function Donneur() {
                     Nouvelle date souhaitée{" "}
                     <span className="text-red-500">*</span>
                   </label>
+
                   <input
                     type="date"
                     defaultValue="2026-04-12"

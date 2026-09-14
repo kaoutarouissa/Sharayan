@@ -15,5 +15,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/demandes-transfusion/delete/{demandeTransfusion}', [DemandeTransfusionController::class, 'destroy']);
     Route::put('/demandes-transfusion/update/{demandeTransfusion}', [DemandeTransfusionController::class, 'update']);
     Route::post('/demandes-don', [DemandeDonController::class, 'store']);
+    Route::get('/demandes-don/historique', [DemandeDonController::class, 'index']);
 
 });

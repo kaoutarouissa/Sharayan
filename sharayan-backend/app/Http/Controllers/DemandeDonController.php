@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\demandeDon;
+use App\Models\DemandeDon as ModelsDemandeDon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,6 +15,11 @@ class DemandeDonController extends Controller
     public function index()
     {
         //
+        $demande = DemandeDon::where('user_id', Auth::id())->get();
+        return response()->json([
+            'message' => 'affichage des demndes de don',
+            "demande" => $demande
+        ], 200);
     }
 
     /**
@@ -30,53 +36,32 @@ class DemandeDonController extends Controller
      */
 
     public function store(Request $request)
-{
-    try {
+    {
+        try {
 
-        $demandeDon = DemandeDon::create([
-            'user_id' => Auth::id(),
-            'hopital' => $request->hopital,
-            'date_prelevement' => $request->date_prelevement,
-            'status' => 'en_attente',
-        ]);
+            $demandeDon = DemandeDon::create([
+                'user_id' => Auth::id(),
+                'hopital' => $request->hopital,
+                'date_prelevement' => $request->date_prelevement,
+                'status' => 'en_attente',
+            ]);
 
-        return response()->json([
-            'message' => 'Demande ajoutée',
-            'demandeDon' => $demandeDon
-        ], 201);
+            return response()->json([
+                'message' => 'Demande ajoutée',
+                'demandeDon' => $demandeDon
+            ], 201);
 
-    } catch (\Exception $e) {
+        } catch (\Exception $e) {
 
-        return response()->json([
-            'message' => 'Erreur',
-            'error' => $e->getMessage(),
-            'line' => $e->getLine(),
-        ], 500);
+            return response()->json([
+                'message' => 'Erreur',
+                'error' => $e->getMessage(),
+                'line' => $e->getLine(),
+            ], 500);
+        }
     }
-}
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'hopital' => 'required|string',
-    //         'date_prelevement' => 'required|date|after_or_equal:today',
-    //     ]);
 
-    //     $demandeDon = DemandeDon::create([
-    //         'user_id' => Auth::id(),
-    //         'hopital' => $request->hopital,
-    //         'date_prelevement' => $request->date_prelevement,
-    //         'status' => 'en_attente',
-    //     ]);
 
-    //     return response()->json([
-    //         'message' => 'Demande ajoutée',
-    //         'demandeDon' => $demandeDon
-    //     ], 201);
-    // }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(demandeDon $demandeDon)
     {
         //

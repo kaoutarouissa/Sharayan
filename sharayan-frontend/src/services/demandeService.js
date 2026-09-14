@@ -3,7 +3,8 @@ export async function createDemandeTransfusion(
   date_transfusion,
   hopital,
   niveau_urgence,
-  motif) {
+  motif,
+) {
   const response = await api.post("/demandes-transfusion", {
     date_transfusion,
     hopital,
@@ -30,16 +31,19 @@ export async function updateDemandeTransfusion(
   motif,
 ) {
   const response = await api.put(`/demandes-transfusion/update/${id}`, {
-    date_transfusion:date_transfusion,
-    hopital:hopital,
-    niveau_urgence:niveau_urgence,
-    motif:motif,
+    date_transfusion: date_transfusion,
+    hopital: hopital,
+    niveau_urgence: niveau_urgence,
+    motif: motif,
   });
   return response.data;
 }
 
 export async function createDemandDon(request) {
-const response= await api.post("/demandes-don", request)
-return response.data
-  
+  const response = await api.post("/demandes-don", request);
+  return response.data;
+}
+export async function displayDemandeDon() {
+  const response = await api.get("/demandes-don/historique");
+  return response.data;
 }

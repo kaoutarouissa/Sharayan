@@ -33,6 +33,7 @@ export function getToken() {
 }
 export async function register(
   name,
+  date,
   telephone,
   email,
   password,
@@ -42,6 +43,7 @@ export async function register(
 ) {
   const response = await api.post("/register", {
     name,
+    date_naissance: date,
     telephone,
     email,
     password,

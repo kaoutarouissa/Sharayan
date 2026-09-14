@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Authcontroller;
+use App\Http\Controllers\DemandeDonController;
 use App\Http\Controllers\DemandeTransfusionController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,5 +14,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/demandes-transfusion/historique', [DemandeTransfusionController::class, 'index']);
     Route::delete('/demandes-transfusion/delete/{demandeTransfusion}', [DemandeTransfusionController::class, 'destroy']);
     Route::put('/demandes-transfusion/update/{demandeTransfusion}', [DemandeTransfusionController::class, 'update']);
+    Route::post('/demandes-don', [DemandeDonController::class, 'store']);
 
 });

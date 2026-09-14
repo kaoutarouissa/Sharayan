@@ -3,8 +3,7 @@ export async function createDemandeTransfusion(
   date_transfusion,
   hopital,
   niveau_urgence,
-  motif,
-) {
+  motif) {
   const response = await api.post("/demandes-transfusion", {
     date_transfusion,
     hopital,
@@ -37,4 +36,10 @@ export async function updateDemandeTransfusion(
     motif:motif,
   });
   return response.data;
+}
+
+export async function createDemandDon(request) {
+const response= await api.post("/demandes-don", request)
+return response.data
+  
 }

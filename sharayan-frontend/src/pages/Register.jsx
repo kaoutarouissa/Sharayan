@@ -140,7 +140,7 @@ export default function Register() {
                 required
                 className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none transition"
               >
-                <option value="" disabled>
+                <option value="" >
                   Sélectionner votre groupe sanguin
                 </option>
 

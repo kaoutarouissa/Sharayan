@@ -32,6 +32,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(DemandeTransfusion::class);
     }
+
+    public function demandeDon() {
+      return  $this->hasMany(demandeDon::class);
+        
+    }
     /**
      * The attributes that should be hidden for serialization.
      *

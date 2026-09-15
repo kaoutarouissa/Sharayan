@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "../services/authService";
+
 export default function Register() {
   const [name, setName] = useState("");
   const [telephone, setTelephone] = useState("");
@@ -12,9 +13,12 @@ export default function Register() {
   const [groupe_sanguin, setGroupSanguin] = useState("");
   const [date, setDate] = useState("");
   const [error, setError] = useState("");
+
   const navigate = useNavigate();
+
   const handeleRegister = async (e) => {
     e.preventDefault();
+
     try {
       const data = await register(
         name,
@@ -26,6 +30,7 @@ export default function Register() {
         role,
         groupe_sanguin,
       );
+
       alert(data.message);
       navigate("/login");
     } catch (error) {
@@ -44,6 +49,7 @@ export default function Register() {
           <h1 className="text-xl font-bold text-slate-900 tracking-tight">
             Inscription Simple – Sharayan
           </h1>
+
           <p className="text-xs text-slate-500 mt-2 leading-relaxed px-2">
             Renseignez vos coordonnées essentielles pour accéder immédiatement à
             la plateforme sécurisée de transfusion sanguine.
@@ -52,12 +58,15 @@ export default function Register() {
 
         {/* Formulaire */}
         <form onSubmit={handeleRegister} className="space-y-4">
+          {/* Message erreur */}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+
           {/* Nom complet */}
-          {error && <p className="text-red-500">{error}</p>}
           <div>
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
               Nom complet
             </label>
+
             <div className="relative">
               <input
                 type="text"
@@ -67,35 +76,40 @@ export default function Register() {
                 placeholder="Jean Dupont"
                 className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 pr-10 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none transition placeholder-slate-400"
               />
-              <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
-                👤
-              </span>
-            </div>
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-slate-800 mb-1.5">
-              Date de naissance
-            </label>
-            <div className="relative">
-              <input
-                type="date"
-                name="date_naissance"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                placeholder="Jean Dupont"
-                className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 pr-10 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none transition placeholder-slate-400"
-              />
+
               <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
                 👤
               </span>
             </div>
           </div>
 
-          {/* Numéro de Téléphone */}
+          {/* Date de naissance */}
+          <div>
+            <label className="block text-xs font-semibold text-slate-800 mb-1.5">
+              Date de naissance
+            </label>
+
+            <div className="relative">
+              <input
+                type="date"
+                name="date_naissance"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 pr-10 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none transition placeholder-slate-400"
+              />
+
+              <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
+                👤
+              </span>
+            </div>
+          </div>
+
+          {/* Numéro de téléphone */}
           <div>
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
               Numéro de Téléphone
             </label>
+
             <div className="flex bg-[#F2F4FF] rounded-xl overflow-hidden focus-within:ring-1 focus-within:ring-[#C81E3B] focus-within:bg-white">
               <input
                 type="tel"
@@ -113,6 +127,7 @@ export default function Register() {
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
               Adresse Email
             </label>
+
             <div className="relative">
               <input
                 type="email"
@@ -122,26 +137,29 @@ export default function Register() {
                 placeholder="jean.dupont@email.com"
                 className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 pr-10 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none transition placeholder-slate-400"
               />
+
               <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
                 @
               </span>
             </div>
           </div>
 
+          {/* Groupe sanguin */}
           <div>
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
-              Group Sanguin
+              Groupe sanguin
             </label>
+
             <div className="relative">
               <select
                 name="groupe_sanguin"
                 value={groupe_sanguin}
                 onChange={(e) => setGroupSanguin(e.target.value)}
-                required
+                required={role === "patient"}
                 className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none transition"
               >
-                <option value="" >
-                  Sélectionner votre groupe sanguin
+                <option value="">
+                  Sélectionner votre groupe sanguin si vous le connaissez
                 </option>
 
                 <option value="A+">A+</option>
@@ -155,11 +173,13 @@ export default function Register() {
               </select>
             </div>
           </div>
+
           {/* Mot de passe */}
           <div>
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
               Mot de passe
             </label>
+
             <div className="relative">
               <input
                 type="password"
@@ -169,6 +189,7 @@ export default function Register() {
                 placeholder="••••••••"
                 className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 pr-10 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none transition placeholder-slate-400"
               />
+
               <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
                 🔒
               </span>
@@ -180,6 +201,7 @@ export default function Register() {
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
               Confirmer le mot de passe
             </label>
+
             <div className="relative">
               <input
                 type="password"
@@ -189,6 +211,7 @@ export default function Register() {
                 onChange={(e) => setPasswordConfirmation(e.target.value)}
                 className="w-full bg-[#F2F4FF] text-slate-700 text-xs rounded-xl px-4 py-3 pr-10 border border-transparent focus:border-[#C81E3B] focus:bg-white outline-none transition placeholder-slate-400"
               />
+
               <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
                 🔄
               </span>
@@ -200,6 +223,7 @@ export default function Register() {
             <label className="block text-xs font-semibold text-slate-800 mb-1.5">
               Rôle
             </label>
+
             <div className="relative">
               <select
                 name="role"
@@ -212,6 +236,7 @@ export default function Register() {
                 <option value="patient">Patient</option>
                 <option value="admin">Admin</option>
               </select>
+
               <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs pointer-events-none">
                 ▼
               </span>

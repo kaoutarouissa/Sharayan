@@ -37,28 +37,22 @@ class DemandeDonController extends Controller
 
     public function store(Request $request)
     {
-        try {
+        $data = $request->validate([
+            'hopital' => 'required|string',
+            'date_prelevement' => 'required|date|after:today',
+        ]);
 
-            $demandeDon = DemandeDon::create([
-                'user_id' => Auth::id(),
-                'hopital' => $request->hopital,
-                'date_prelevement' => $request->date_prelevement,
-                'status' => 'en_attente',
-            ]);
+        $demandeDon = DemandeDon::create([
+            'user_id' => Auth::id(),
+            'hopital' => $data['hopital'],
+            'date_prelevement' => $data['date_prelevement'],
+            'status' => 'en_attente',
+        ]);
 
-            return response()->json([
-                'message' => 'Demande ajoutée',
-                'demandeDon' => $demandeDon
-            ], 201);
-
-        } catch (\Exception $e) {
-
-            return response()->json([
-                'message' => 'Erreur',
-                'error' => $e->getMessage(),
-                'line' => $e->getLine(),
-            ], 500);
-        }
+        return response()->json([
+            'message' => 'Demande ajoutée',
+            'demandeDon' => $demandeDon
+        ], 201);
     }
 
 
@@ -81,6 +75,15 @@ class DemandeDonController extends Controller
     public function update(Request $request, demandeDon $demandeDon)
     {
         //
+        $data = $request->validate([
+            "hopital" => 'required|string',
+            "date_prelevement" => 'required|date|after:today'
+        ]);
+        $demandeDon->update($data);
+        return response()->json([
+            'message' => 'Modification effectuée avec succès',
+            'demande' => $demandeDon
+        ], 200);
     }
 
     /**
@@ -89,5 +92,10 @@ class DemandeDonController extends Controller
     public function destroy(demandeDon $demandeDon)
     {
         //
+        $demandeDon->delete();
+        return response()->json([
+            'message' => 'Demande supprimée avec succès',
+            "demande" => $demandeDon
+        ], 200);
     }
 }

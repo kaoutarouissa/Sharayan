@@ -47,3 +47,14 @@ export async function displayDemandeDon() {
   const response = await api.get("/demandes-don/historique");
   return response.data;
 }
+export async function updateDemandeDon(id, hopital, date_prelevement) {
+  const response = await api.put(`/demande-don/update/${id}`, {
+    hopital: hopital,
+    date_prelevement: date_prelevement,
+  });
+  return response.data;
+}
+export async function deleteDemandeDon(id) {
+  const response = await api.delete(`/demande-don/delete/${id}`);
+  return response.data;
+}

@@ -43,7 +43,7 @@ class Authcontroller extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:7|confirmed',
             'role' => 'required|in:admin,patient,donneur',
-            'groupe_sanguin' => 'required|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+            'groupe_sanguin' => 'required_if:role,patient|nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
             'date_naissance' => 'required|date',
         ]);
         $user = User::create([
@@ -73,6 +73,7 @@ class Authcontroller extends Controller
     public function updateProfil(Request $request)
     {
         $user = $request->user();
+
         $validate = $request->validate([
             'name' => 'required|string',
             'telephone' => 'required|string',
@@ -81,9 +82,10 @@ class Authcontroller extends Controller
                 'email',
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
-             'date_naissance' => 'required|date',
         ]);
+
         $user->update($validate);
+
         return response()->json([
             'message' => 'Profil modifié avec succès',
             'user' => $user

@@ -20,10 +20,20 @@ export default function Donneur() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
 
+  const [historique, setHistorique] = useState([]);
+  const [showModification, setShowModification] = useState(false);
+
+  const [modifications, setModification] = useState({
+    id: "",
+    hopital: "",
+    date_prelevement: "",
+  });
+
   const handelsubmit = async (e) => {
     setMessage("");
     setSuccess("");
     setError("");
+
     e.preventDefault();
 
     try {
@@ -86,18 +96,6 @@ export default function Donneur() {
     getHistorique();
   }, []);
 
-  {
-    /* pour changement de demande */
-  }
-  const [historique, setHistorique] = useState([]);
-  const [showModification, setShowModification] = useState(false);
-
-  const [modifications, setModification] = useState({
-    id: "",
-    hopital: "",
-    date_prelevement: "",
-  });
-
   // pour modification de la demande
   const handelChangemodification = (e) => {
     setModification({
@@ -126,28 +124,50 @@ export default function Donneur() {
       setShowModification(false);
     } catch (erreur) {
       console.error(erreur);
-      setError(erreur.response?.data?.message || "Échec de la modification");
+
+      setError(
+        erreur.response?.data?.message || "Échec de la modification",
+      );
     }
   };
 
-  // pour suppression du demande
+  // pour suppression de la demande
   const handeldeleteDemande = async (e, id) => {
     e.preventDefault();
+
     setError("");
     setSuccess("");
+
     try {
       const data = await deleteDemandeDon(id);
+
+      console.log(data);
+
       const historiqueData = await displayDemandeDon();
       setHistorique(historiqueData.demande);
-      setSuccess("demande supprimée avec succès");
+
+      setSuccess("Demande supprimée avec succès");
     } catch (erreur) {
       console.error(erreur);
-      setError(erreur.response?.data?.message || "suppression echouée");
+
+      setError(
+        erreur.response?.data?.message || "Suppression échouée",
+      );
     }
   };
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 font-sans flex flex-col justify-between">
       <Navbar />
+
+      {/* ================= MESSAGE GLOBAL ================= */}
+      {(success || error || message) && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999]">
+          <div className="bg-white px-6 py-3 rounded-lg shadow-lg border border-gray-300">
+            {success || error || message}
+          </div>
+        </div>
+      )}
 
       <main className="max-w-4xl mx-auto w-full p-4 my-6">
         {/* Formulaire Card */}
@@ -157,29 +177,11 @@ export default function Donneur() {
           </h2>
 
           <p className="text-gray-500 text-sm mb-6">
-            Votre geste sauve jusqu'à trois vies. Remplissez ce formulaire pour
-            planifier votre rendez-vous de don.
+            Votre geste sauve jusqu'à trois vies. Remplissez ce formulaire
+            pour planifier votre rendez-vous de don.
           </p>
 
           <form onSubmit={handelsubmit} className="space-y-6">
-            {success && (
-              <p className="text-green-600 text-sm bg-green-50 p-3 rounded-lg">
-                {success}
-              </p>
-            )}
-
-            {message && (
-              <p className="text-red-500 text-sm bg-red-50 p-3 rounded-lg">
-                {message}
-              </p>
-            )}
-
-            {error && (
-              <p className="text-red-500 text-sm bg-red-50 p-3 rounded-lg">
-                {error}
-              </p>
-            )}
-
             {/* Section 01 : Informations Personnelles */}
             <div>
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 border-b pb-1 border-gray-200">
@@ -316,7 +318,7 @@ export default function Donneur() {
 
                         <td className="p-3">
                           <span
-                            className={`text-xs font-bold px-2.5 py-1 rounded  bg-blue-100 ${
+                            className={`text-xs font-bold px-2.5 py-1 rounded bg-blue-100 ${
                               demande.status === "en_attente"
                                 ? "text-amber-500"
                                 : demande.status === "acceptee"
@@ -329,6 +331,7 @@ export default function Donneur() {
                             {demande.status}
                           </span>
                         </td>
+
                         {demande.status === "en_attente" && (
                           <td className="p-3">
                             <button
@@ -337,7 +340,8 @@ export default function Donneur() {
                                 setModification({
                                   id: demande.id,
                                   hopital: demande.hopital,
-                                  date_prelevement: demande.date_prelevement,
+                                  date_prelevement:
+                                    demande.date_prelevement,
                                 });
 
                                 setShowModification(true);
@@ -360,7 +364,10 @@ export default function Donneur() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="6" className="p-6 text-center text-gray-400">
+                      <td
+                        colSpan="6"
+                        className="p-6 text-center text-gray-400"
+                      >
                         Aucune demande de don pour le moment.
                       </td>
                     </tr>
@@ -417,7 +424,8 @@ export default function Donneur() {
                     <input
                       type="text"
                       value={
-                        user?.groupe_sanguin || "Inconnu (À tester sur place)"
+                        user?.groupe_sanguin ||
+                        "Inconnu (À tester sur place)"
                       }
                       readOnly
                       className="w-full border border-gray-200 bg-gray-50 text-gray-500 rounded-lg px-3 py-2.5 text-sm cursor-not-allowed"

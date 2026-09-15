@@ -44,8 +44,13 @@ class Authcontroller extends Controller
             'password' => 'required|string|min:7|confirmed',
             'role' => 'required|in:admin,patient,donneur',
             'groupe_sanguin' => 'required_if:role,patient|nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
-            'date_naissance' => 'required|date',
+            'date_naissance' => 'required|date|before_or_equal:today',
         ]);
+        if ($request->role === 'donneur') {
+            $request->validate([
+                'date_naissance' => 'before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+            ]);
+        }
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,

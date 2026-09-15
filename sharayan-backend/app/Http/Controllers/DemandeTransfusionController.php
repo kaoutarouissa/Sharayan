@@ -39,7 +39,7 @@ class DemandeTransfusionController extends Controller
         //
         $request->validate([
 
-            'date_transfusion' => 'required|date|after_or_equal:today',
+            'date_transfusion' => 'required|date|after:today',
             'hopital' => 'required|string|max:255',
             'niveau_urgence' => 'required|in:urgente,prioritaire,normale',
             'motif' => 'required|string|max:1000',

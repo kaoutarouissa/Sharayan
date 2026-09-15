@@ -56,9 +56,15 @@ class DemandeDonController extends Controller
     }
 
 
-    public function show(demandeDon $demandeDon)
+    public function showDemandesAdmin()
     {
         //
+        $demande = DemandeDon::with('user')->get();
+
+        return response()->json([
+            'message' => 'affichage des demandes de don',
+            'demande' => $demande
+        ], 200);
     }
 
     /**

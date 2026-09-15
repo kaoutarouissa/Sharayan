@@ -18,5 +18,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/demandes-don/historique', [DemandeDonController::class, 'index']);
     Route::put('demande-don/update/{demandeDon}', [DemandeDonController::class, 'update']);
     Route::delete('/demande-don/delete/{demandeDon}', [DemandeDonController::class, 'destroy']);
+    Route::get('/admin/demandes-don', [DemandeDonController::class, 'showDemandesAdmin']);
 
 });

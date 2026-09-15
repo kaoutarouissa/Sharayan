@@ -58,3 +58,7 @@ export async function deleteDemandeDon(id) {
   const response = await api.delete(`/demande-don/delete/${id}`);
   return response.data;
 }
+export async function displayDemandesDonAdmin() {
+  const response = await api.get("/admin/demandes-don");
+  return response.data;
+}

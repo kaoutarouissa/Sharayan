@@ -3,6 +3,7 @@
 use App\Http\Controllers\Authcontroller;
 use App\Http\Controllers\DemandeDonController;
 use App\Http\Controllers\DemandeTransfusionController;
+use App\Http\Controllers\ValidationAdmincontroller;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [Authcontroller::class, 'register']);
@@ -19,5 +20,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('demande-don/update/{demandeDon}', [DemandeDonController::class, 'update']);
     Route::delete('/demande-don/delete/{demandeDon}', [DemandeDonController::class, 'destroy']);
     Route::get('/admin/demandes-don', [DemandeDonController::class, 'showDemandesAdmin']);
-
+    Route::post("/admin/accepterDon/{id}", [ValidationAdmincontroller::class, "accepteDemandeDon"]);
+    Route::post("/admin/terminerDon/{id}", [ValidationAdmincontroller::class, 'terminerDemande']);
 });

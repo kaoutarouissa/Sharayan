@@ -1,25 +1,57 @@
-import React, {useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { displayDemandesDonAdmin } from "../../services/demandeService";
+import {
+  accepterDemande,
+  terminerDemande,
+} from "../../services/validationDonService";
 export default function AdminDashboard() {
   const [demandes, setDemandes] = useState([]);
-useEffect(() => {
-  const getDemandesDon = async () => {
+  const [messageError, setMessageError] = useState("");
+  const [acceptermessage, setacceptermessage] = useState("");
+  const [terminermessage, seterminermessage] = useState("");
+  useEffect(() => {
+    const getDemandesDon = async () => {
+      try {
+        const data = await displayDemandesDonAdmin();
+
+        console.log("DATA :", data);
+
+        setDemandes(data.demande || []);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getDemandesDon();
+  }, []);
+
+  const handelAccepter = async (id) => {
     try {
-      const data = await displayDemandesDonAdmin();
-
-      console.log("DATA :", data);
-
-      setDemandes(data.demande || []);
+      const data = await accepterDemande(id);
+      console.log(data);
+      const dataDemandes = await displayDemandesDonAdmin();
+      setDemandes(dataDemandes.demande || []);
+      setacceptermessage("Demande est accepte");
     } catch (error) {
-      console.error(error);
+      // console.error(error)
+      console.log("ERREUR :", error.response?.data);
+      setMessageError(error.response?.data?.message);
     }
   };
-
-  getDemandesDon();
-}, []);
-
+  // handelRefuser
+  const handelTerminer = async (id) => {
+    try {
+      await terminerDemande(id);
+      seterminermessage(
+        "le prélèvement  est fait et sera ajouter au stock sanguin",
+      );
+    } catch (error) {
+      console.error(error.response?.data);
+      setMessageError(error.response?.data?.message);
+    }
+  };
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <Navbar />
@@ -52,6 +84,21 @@ useEffect(() => {
             <p className="text-xs text-slate-400 mt-1">
               Gestion et validation des demandes de don de sang
             </p>
+            {messageError && (
+              <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4">
+                {messageError}
+              </div>
+            )}
+            {acceptermessage && (
+              <div className="bg-red-50 text-green-400 p-3 rounded-lg mb-4">
+                {acceptermessage}
+              </div>
+            )}
+            {terminermessage && (
+              <div className="bg-red-50 text-green-400 p-3 rounded-lg mb-4">
+                {terminermessage}
+              </div>
+            )}
           </div>
 
           <div className="overflow-x-auto">
@@ -73,34 +120,68 @@ useEffect(() => {
               </thead>
 
               <tbody className="divide-y divide-slate-100 text-slate-700">
-                {demandes.map((item)=>(  
-                <tr>
-                  <td className="p-3 font-semibold text-slate-900">
-                    {item.user?.name}
-                  </td>
+                {demandes.map((item) => (
+                  <tr key={item.id}>
+                    <td className="p-3 font-semibold text-slate-900">
+                      {item.user?.name}
+                    </td>
 
-                  <td className="p-3"> {new Date(item.created_at).toLocaleDateString()}</td>
+                    <td className="p-3">
+                      {" "}
+                      {new Date(item.created_at).toLocaleDateString()}
+                    </td>
 
-                  <td className="p-3">{item.user?.groupe_sanguin}</td>
-                  <td className="p-3"> {item.hopital}</td>
-                  <td className="p-3">{new Date(item.date_prelevement).toLocaleDateString()}</td>
+                    <td className="p-3">{item.user?.groupe_sanguin}</td>
+                    <td className="p-3"> {item.hopital}</td>
+                    <td className="p-3">
+                      {new Date(item.date_prelevement).toLocaleDateString()}
+                    </td>
 
-                  <td className="p-3">
-                    <span className="bg-amber-50 text-amber-600 px-2.5 py-1 rounded-full font-medium">
-                       {item.status}
-                    </span>
-                  </td>
+                    <td className="p-3">
+                      {item.status === "en_attente" ? (
+                        <span className="bg-amber-50 text-amber-600 px-2.5 py-1 rounded-full font-medium">
+                          En attente
+                        </span>
+                      ) : item.status === "terminee" ? (
+                        <span className="bg-amber-50 text-green-600 px-2.5 py-1 rounded-full font-medium">
+                          Terminée
+                        </span>
+                      ) : (
+                        <span>{item.status}</span>
+                      )}
+                    </td>
 
-                  <td className="p-3 text-center">
-                    <select className="border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-[#A6192E]">
-                      <option>Choisir</option>
-                      <option value="acceptee">Accepter</option>
-                      <option value="refusee">Refuser</option>
-                      <option value="terminee">Terminer</option>
-                    </select>
-                  </td>
-                </tr>
-                ) )}
+                    <td className="p-3 text-center">
+                      <select
+                        onChange={(e) => {
+                          console.log("VALEUR :", e.target.value);
+                          console.log("ID :", item.id);
+                          if (e.target.value === "acceptee") {
+                            handelAccepter(item.id);
+                          }
+                          if (e.target.value === "refusee") {
+                            handelRefuser(item.id);
+                          }
+                          if (e.target.value === "terminee") {
+                            handelTerminer(item.id);
+                          }
+                        }}
+                        className="border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-[#A6192E]"
+                      >
+                        <option>Choisir</option>
+                        {item.status === "en_attente" && (
+                          <>
+                            <option value="acceptee">Accepter</option>
+                            <option value="refusee">Refuser</option>
+                          </>
+                        )}
+                        {item.status === "acceptee" && (
+                          <option value="terminee">Terminer</option>
+                        )}
+                      </select>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

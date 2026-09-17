@@ -5,12 +5,21 @@ import { displayDemandesDonAdmin } from "../../services/demandeService";
 import {
   accepterDemande,
   terminerDemande,
+  refuserDemandeDon,
 } from "../../services/validationDonService";
+import {
+   accepterDemandTransfusion
+} from "../../services/validationTransfusionService"
+import { getinfoStock } from "../../services/stockService";
 export default function AdminDashboard() {
   const [demandes, setDemandes] = useState([]);
   const [messageError, setMessageError] = useState("");
-  const [acceptermessage, setacceptermessage] = useState("");
-  const [terminermessage, seterminermessage] = useState("");
+  const [accepterDonMessage, setaccepterDonMessage] = useState("");
+  const [terminerDonMessage, setterminerDonMessage] = useState("");
+  const [refuserDonMessage, setrefuserDonMessage] = useState("");
+  const [stock, setStock] = useState([]);
+  const [accepterTransfussionMessage, setaccepterTransfusion]=useState("")
+  const [demandeDon, setDemande] =useState("");
   useEffect(() => {
     const getDemandesDon = async () => {
       try {
@@ -33,18 +42,22 @@ export default function AdminDashboard() {
       console.log(data);
       const dataDemandes = await displayDemandesDonAdmin();
       setDemandes(dataDemandes.demande || []);
-      setacceptermessage("Demande est accepte");
+      setaccepterDonMessage("Demande est accepte");
     } catch (error) {
       // console.error(error)
       console.log("ERREUR :", error.response?.data);
       setMessageError(error.response?.data?.message);
     }
   };
-  // handelRefuser
+
   const handelTerminer = async (id) => {
     try {
       await terminerDemande(id);
-      seterminermessage(
+      const dataDemandes = await displayDemandesDonAdmin();
+      setDemandes(dataDemandes.demande || []);
+      const dataStock = await getinfoStock();
+      setStock(dataStock.stock || []);
+      setterminerDonMessage(
         "le prélèvement  est fait et sera ajouter au stock sanguin",
       );
     } catch (error) {
@@ -52,6 +65,38 @@ export default function AdminDashboard() {
       setMessageError(error.response?.data?.message);
     }
   };
+  const handelRefuser = async (id) => {
+    try {
+      const data = await refuserDemandeDon(id);
+      setrefuserDonMessage(data.message);
+      const dataDemandes = await displayDemandesDonAdmin();
+      setDemandes(dataDemandes.demande || []);
+    } catch (error) {
+      console.error("error", error);
+      setMessageError(error.response?.data?.message);
+    }
+  };
+  useEffect(() => {
+    const getstock = async () => {
+      try {
+        const data = await getinfoStock();
+        console.log("data", data);
+        setStock(data.stock || []);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getstock();
+  }, []);
+  const handelAccepterTransfusion=async (id) => {
+    try{
+    const data=  await  accepterDemandTransfusion(id)
+      setaccepterTransfusion(data.message)
+    }
+    catch(error){
+      setMessageError(error.response?.data?.message)
+    }
+  }
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <Navbar />
@@ -66,9 +111,9 @@ export default function AdminDashboard() {
           </h1>
 
           <p className="text-xs sm:text-sm text-slate-500 mt-1 leading-relaxed">
-            Gestion opérationnelle des dons, traitement des demandes de sang et
-            régulation des stocks en temps réel sur l'ensemble du réseau
-            transfusionnel hospitalier.
+            Gestion opérationnelle des dons, traitement des demandes de
+            transfusion sanguines et régulation des stocks en temps réel sur
+            l'ensemble du réseau transfusionnel hospitalier.
           </p>
         </div>
 
@@ -89,14 +134,19 @@ export default function AdminDashboard() {
                 {messageError}
               </div>
             )}
-            {acceptermessage && (
+            {accepterDonMessage && (
               <div className="bg-red-50 text-green-400 p-3 rounded-lg mb-4">
-                {acceptermessage}
+                {accepterDonMessage}
               </div>
             )}
-            {terminermessage && (
+            {terminerDonMessage && (
               <div className="bg-red-50 text-green-400 p-3 rounded-lg mb-4">
-                {terminermessage}
+                {terminerDonMessage}
+              </div>
+            )}
+            {refuserDonMessage && (
+              <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4">
+                {refuserDonMessage}
               </div>
             )}
           </div>
@@ -145,6 +195,10 @@ export default function AdminDashboard() {
                       ) : item.status === "terminee" ? (
                         <span className="bg-amber-50 text-green-600 px-2.5 py-1 rounded-full font-medium">
                           Terminée
+                        </span>
+                      ) : item.status === "refusee" ? (
+                        <span className="bg-amber-50 text-red-600 px-2.5 py-1 rounded-full font-medium">
+                          Refusée
                         </span>
                       ) : (
                         <span>{item.status}</span>
@@ -295,45 +349,29 @@ export default function AdminDashboard() {
               </thead>
 
               <tbody className="divide-y divide-slate-100 text-slate-700">
-                <tr>
-                  <td className="p-3 font-semibold text-slate-900">
-                    Karim Mansouri
-                  </td>
+                {stock.map((item) => (
+                  <tr>
+                    <td className="p-3 font-semibold text-slate-900">
+                      {item.name}
+                    </td>
 
-                  <td className="p-3 font-bold text-[#A6192E]">O+</td>
+                    <td className="p-3 font-bold text-[#A6192E]">
+                      {item.groupe_sanguin}
+                    </td>
 
-                  <td className="p-3">15/09/2026</td>
+                    <td className="p-3">{item.date_prelevement}</td>
 
-                  <td className="p-3">15/12/2026</td>
+                    <td className="p-3">{item.date_expiration}</td>
 
-                  <td className="p-3">1 poche</td>
+                    <td className="p-3">{item.quantite_stock}</td>
 
-                  <td className="p-3">
-                    <span className="bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-full font-medium">
-                      Disponible
-                    </span>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td className="p-3 font-semibold text-slate-900">
-                    Youssef Tazi
-                  </td>
-
-                  <td className="p-3 font-bold text-[#A6192E]">A+</td>
-
-                  <td className="p-3">14/09/2026</td>
-
-                  <td className="p-3">14/12/2026</td>
-
-                  <td className="p-3">1 poche</td>
-
-                  <td className="p-3">
-                    <span className="bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-full font-medium">
-                      Disponible
-                    </span>
-                  </td>
-                </tr>
+                    <td className="p-3">
+                      <span className="bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-full font-medium">
+                        {item.status_stock}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Authcontroller;
 use App\Http\Controllers\DemandeDonController;
 use App\Http\Controllers\DemandeTransfusionController;
+use App\Http\Controllers\StockController;
 use App\Http\Controllers\ValidationAdmincontroller;
 use Illuminate\Support\Facades\Route;
 
@@ -21,5 +22,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/demande-don/delete/{demandeDon}', [DemandeDonController::class, 'destroy']);
     Route::get('/admin/demandes-don', [DemandeDonController::class, 'showDemandesAdmin']);
     Route::post("/admin/accepterDon/{id}", [ValidationAdmincontroller::class, "accepteDemandeDon"]);
-    Route::post("/admin/terminerDon/{id}", [ValidationAdmincontroller::class, 'terminerDemande']);
+    Route::post("/admin/terminerDon/{id}", [ValidationAdmincontroller::class, 'terminerDemandeDon']);
+    Route::post("/admin/refuserDon/{id}", [ValidationAdmincontroller::class, 'refuserDemandeDon']);
+    Route::get("admin/infoStock", [StockController::class, 'infoStock']);
+    Route::post("/admin/accepterTransfusion/{id}", [ValidationAdmincontroller::class, "accepterDemandTransfusion"]);
+
 });

@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import { displayDemandesDonAdmin } from "../../services/demandeService";
+import {
+  displayDemandesDonAdmin,
+  dispalyDemandsTransfusion,
+} from "../../services/demandeService";
 import {
   accepterDemande,
   terminerDemande,
   refuserDemandeDon,
 } from "../../services/validationDonService";
-import {
-   accepterDemandTransfusion
-} from "../../services/validationTransfusionService"
+import { accepterDemandTransfusion } from "../../services/validationTransfusionService";
 import { getinfoStock } from "../../services/stockService";
 export default function AdminDashboard() {
   const [demandes, setDemandes] = useState([]);
@@ -18,8 +19,8 @@ export default function AdminDashboard() {
   const [terminerDonMessage, setterminerDonMessage] = useState("");
   const [refuserDonMessage, setrefuserDonMessage] = useState("");
   const [stock, setStock] = useState([]);
-  const [accepterTransfussionMessage, setaccepterTransfusion]=useState("")
-  const [demandeDon, setDemande] =useState("");
+  const [accepterTransfussionMessage, setaccepterTransfusion] = useState("");
+  const [demandeTransfusion, setDemandetransfusion] = useState([]);
   useEffect(() => {
     const getDemandesDon = async () => {
       try {
@@ -88,15 +89,30 @@ export default function AdminDashboard() {
     };
     getstock();
   }, []);
-  const handelAccepterTransfusion=async (id) => {
-    try{
-    const data=  await  accepterDemandTransfusion(id)
-      setaccepterTransfusion(data.message)
+  const handelAccepterTransfusion = async (id) => {
+    try {
+      const data = await accepterDemandTransfusion(id);
+      setaccepterTransfusion(data.message);
+    } catch (error) {
+      setMessageError(error.response?.data?.message);
     }
-    catch(error){
-      setMessageError(error.response?.data?.message)
-    }
-  }
+  };
+  useEffect(() => {
+    const getDemandesTransfusion = async () => {
+      try {
+        const data = await dispalyDemandsTransfusion();
+
+        setDemandetransfusion(data.demande || []);
+        console.log("DATA :", data);
+        console.log("data demande", data.demande);
+        console.log(demandeTransfusion);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getDemandesTransfusion();
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <Navbar />
@@ -279,38 +295,67 @@ export default function AdminDashboard() {
               </thead>
 
               <tbody className="divide-y divide-slate-100 text-slate-700">
-                <tr>
-                  <td className="p-3 font-semibold text-slate-900">Ahmed</td>
+                {demandeTransfusion.map((item) => (
+                  <tr>
+                    <td className="p-3 font-semibold text-slate-900">
+                      {item.user.name}
+                    </td>
 
-                  <td className="p-3">10/02/2000</td>
+                    <td className="p-3">{item.user.date_naissance}</td>
 
-                  <td className="p-3 font-bold">O+</td>
+                    <td className="p-3 font-bold">
+                      {item.groupe_sanguin || item.user.groupe_sanguin}
+                    </td>
 
-                  <td className="p-3">CHU Ibn Sina</td>
+                    <td className="p-3">{item.hopital}</td>
 
-                  <td className="p-3">16/09/2026</td>
-                  <td className="p-3">Hymoragie</td>
-                  <td className="p-3">
-                    <span className="bg-red-50 text-red-600 px-2 py-1 rounded font-medium">
-                      Urgente
-                    </span>
-                  </td>
+                    <td className="p-3">{item.date_transfusion}</td>
+                    <td className="p-3">{item.motif}</td>
+                    <td className="p-3">
+                      {item.niveau_urgence === "urgente" && (
+                        <span className="bg-red-50 text-red-600 px-2 py-1 rounded font-medium">
+                          {item.niveau_urgence}
+                        </span>
+                      )}
+                      {item.niveau_urgence === "normale" && (
+                        <span className="bg-red-50 text-green-600-600 px-2 py-1 rounded font-medium">
+                          {item.niveau_urgence}
+                        </span>
+                      )}
+                      {item.niveau_urgence === "prioritaire" && (
+                        <span className="bg-red-50 text-orange-400 px-2 py-1 rounded font-medium">
+                          {item.niveau_urgence}
+                        </span>
+                      )}
+                    </td>
 
-                  <td className="p-3">
-                    <span className="bg-amber-50 text-amber-600 px-2.5 py-1 rounded-full font-medium">
-                      En attente
-                    </span>
-                  </td>
+                    <td className="p-3">
+                      {item.status === "en_attente" && (
+                        <span className="bg-amber-50 text-amber-600 px-2.5 py-1 rounded-full font-medium">
+                          {item.status}
+                        </span>
+                      )}
+                      {item.status === "accepte" && (
+                        <span className="bg-amber-50 text-green-600 px-2.5 py-1 rounded-full font-medium">
+                          {item.status}
+                        </span>
+                      )}
+                      {item.status === "terminee" && (
+                        <span className="bg-amber-50 text-blue-600 px-2.5 py-1 rounded-full font-medium">
+                          {item.status}
+                        </span>
+                      )}
+                    </td>
 
-                  <td className="p-3 text-center">
-                    <select className="border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-[#A6192E]">
-                      <option>Choisir</option>
-                      <option value="acceptee">Accepter</option>
-                      <option value="refusee">Refuser</option>
-                      <option value="terminee">Terminer</option>
-                    </select>
-                  </td>
-                </tr>
+                    <td className="p-3 text-center">
+                      <select className="border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-[#A6192E]">
+                        <option>Choisir</option>
+                        <option value="acceptee">Accepter</option>
+                        <option value="terminee">Terminer</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

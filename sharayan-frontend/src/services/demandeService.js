@@ -62,3 +62,8 @@ export async function displayDemandesDonAdmin() {
   const response = await api.get("/admin/demandes-don");
   return response.data;
 }
+export async function dispalyDemandsTransfusion(){
+  const response= await api.get("/admin/demande-transfusion")
+  console.log(response)
+  return response.data
+}

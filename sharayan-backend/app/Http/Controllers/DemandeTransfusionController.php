@@ -78,9 +78,14 @@ class DemandeTransfusionController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(DemandeTransfusion $demandeTransfusion)
+    public function showDemandeTransfusionAdmin()
     {
         //
+        $demandeTransfusion=DemandeTransfusion::with('user')->get();
+        return response()->json([
+            'message'=>'dispaly les demandes de transfusion',
+            'demande'=>$demandeTransfusion
+        ], 200);
     }
 
     /**

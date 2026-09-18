@@ -181,12 +181,15 @@ class ValidationAdmincontroller extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function terminerDemandeTransfusion(int $id)
     {
         //
+        $demande = DemandeTransfusion::whree('id', $id)->where('status', "acceptee")->first();
+        if ($demande) {
+            return response()->json([
+                'message' => 'Demande de transfusion sanguin est terminée'
+            ]);
+        }
     }
 
     /**

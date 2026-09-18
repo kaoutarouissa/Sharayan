@@ -26,5 +26,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post("/admin/refuserDon/{id}", [ValidationAdmincontroller::class, 'refuserDemandeDon']);
     Route::get("admin/infoStock", [StockController::class, 'infoStock']);
     Route::post("/admin/accepterTransfusion/{id}", [ValidationAdmincontroller::class, "accepterDemandTransfusion"]);
+    Route::get("/admin/demande-transfusion", [DemandeTransfusionController::class, 'showDemandeTransfusionAdmin']);
 
 });

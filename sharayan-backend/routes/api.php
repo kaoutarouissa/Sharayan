@@ -3,6 +3,7 @@
 use App\Http\Controllers\Authcontroller;
 use App\Http\Controllers\DemandeDonController;
 use App\Http\Controllers\DemandeTransfusionController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\ValidationAdmincontroller;
 use Illuminate\Support\Facades\Route;
@@ -27,5 +28,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get("admin/infoStock", [StockController::class, 'infoStock']);
     Route::post("/admin/accepterTransfusion/{id}", [ValidationAdmincontroller::class, "accepterDemandTransfusion"]);
     Route::get("/admin/demande-transfusion", [DemandeTransfusionController::class, 'showDemandeTransfusionAdmin']);
-
+    Route::get('/notifications', [NotificationController::class, 'index']);
 });

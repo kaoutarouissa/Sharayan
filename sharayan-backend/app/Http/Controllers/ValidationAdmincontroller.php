@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DemandeDon;
 use App\Models\DemandeTransfusion;
+use App\Models\Notification;
 use App\Models\stock;
 use App\Models\User;
 use Carbon\Carbon;
@@ -61,8 +62,14 @@ class ValidationAdmincontroller extends Controller
         $demande->status = "acceptee";
         $demande->save();
 
+        $notification = Notification::create([
+            'user_id' => $demande->user_id,
+            'contenu' => 'Votre demande de don a été acceptée. Veuillez vous présenter à l’hôpital à la date prévue pour le prélèvement.'
+
+        ]);
         return response()->json([
-            'message' => 'La demande est acceptée'
+            'message' => 'La demande est acceptée',
+            'notification' => $notification
         ], 200);
     }
 
@@ -170,9 +177,13 @@ class ValidationAdmincontroller extends Controller
         if ($stock) {
             $demande->status = "acceptee";
             $demande->save();
-
+            $notification = Notification::create([
+                'user_id' => $demande->user_id,
+                'contenu' => 'Votre demande de transfusion a été acceptée. Veuillez vous présenter à l’hôpital à la date prévue.'
+            ]);
             return response()->json([
-                'message' => 'demande acceptée'
+                'message' => 'demande acceptée',
+                'notification' => $notification
             ]);
         }
 

@@ -14,7 +14,7 @@ import {
   accepterDemandTransfusion,
   terminerTransfusion,
 } from "../../services/validationTransfusionService";
-import { getinfoStock } from "../../services/stockService";
+import { getinfoStock, retirerStock } from "../../services/stockService";
 export default function AdminDashboard() {
   const [demandes, setDemandes] = useState([]);
   const [messageError, setMessageError] = useState("");
@@ -26,6 +26,7 @@ export default function AdminDashboard() {
   const [terminerTransfusionMessage, setTerminerTransfusionMessage] =
     useState("");
   const [demandeTransfusion, setDemandetransfusion] = useState([]);
+
   useEffect(() => {
     const getDemandesDon = async () => {
       try {
@@ -97,19 +98,34 @@ export default function AdminDashboard() {
   const handelAccepterTransfusion = async (id) => {
     try {
       const data = await accepterDemandTransfusion(id);
+      const dataTransfusion = await dispalyDemandsTransfusion();
+      setDemandetransfusion(dataTransfusion.demande || []);
       setaccepterTransfusion(data.message);
     } catch (error) {
       setMessageError(error.response?.data?.message);
     }
   };
-  const handelTerminerTransfusion = async (id) => {
-    try {
-      const data = await terminerTransfusion(id);
-      setTerminerTransfusionMessage("Demande de transfusion est acceptée");
-    } catch (error) {
-      setTerminerTransfusionMessage(error.response?.data?.message);
-    }
-  };
+const handelTerminerTransfusion = async (id) => {
+  try {
+    await terminerTransfusion(id);
+
+    await retirerStock(id);
+
+    const dataTransfusion = await dispalyDemandsTransfusion();
+    setDemandetransfusion(dataTransfusion.demande || []);
+
+    const dataStock = await getinfoStock();
+    setStock(dataStock.stock || []);
+
+    setTerminerTransfusionMessage(
+      "Demande de transfusion est terminée"
+    );
+  } catch (error) {
+    setTerminerTransfusionMessage(
+      error.response?.data?.message
+    );
+  }
+};
   useEffect(() => {
     const getDemandesTransfusion = async () => {
       try {
@@ -388,13 +404,12 @@ export default function AdminDashboard() {
                       >
                         <option>Choisir</option>
                         {item.status === "en_attente" && (
-                          
-                            <option value="acceptee">Accepter</option>
-                            )}
-                        
+                          <option value="acceptee">Accepter</option>
+                        )}
+
                         {item.status === "acceptee" && (
-                        <option value="terminee">Terminer</option>
-                        ) }
+                          <option value="terminee">Terminer</option>
+                        )}
                       </select>
                     </td>
                   </tr>

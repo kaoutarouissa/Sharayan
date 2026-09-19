@@ -29,13 +29,13 @@ class ValidationAdmincontroller extends Controller
         $age = Carbon::parse($donneur->date_naissance)->age;
 
         if ($demande->status !== "en_attente") {
-              $notification = Notification::create([
+            $notification = Notification::create([
                 'user_id' => $demande->user_id,
-                'contenu' => 'Votre demande de don n°'. $demande->id . 'ne peut pas être acceptée car est déjà acceptée.'
+                'contenu' => 'Votre demande de don n°' . $demande->id . 'ne peut pas être acceptée car est déjà acceptée.'
             ]);
             return response()->json([
                 'message' => 'La demande est déjà acceptée',
-                'notification'=>$notification
+                'notification' => $notification
             ], 422);
         }
 
@@ -65,7 +65,7 @@ class ValidationAdmincontroller extends Controller
             ) {
                 $notification = Notification::create([
                     'user_id' => $demande->user_id,
-                    'contenu' => 'Votre demande de don n°' . $demande->id . ' ne peut pas être acceptée car vous devez attendre 4 mois depuis votre dernier prélèvement.'
+                    'contenu' => 'Votre demande de don n°' . $demande->id . ' ne peut pas être acceptée car vous devez attendre 4 mois depuis votre dernier prélèvement ' . $demande->date_prelevement . '.'
                 ]);
                 return response()->json([
                     'message' => 'Le donneur doit attendre 4 mois depuis son dernier prélèvement.',
@@ -79,7 +79,7 @@ class ValidationAdmincontroller extends Controller
 
         $notification = Notification::create([
             'user_id' => $demande->user_id,
-            'contenu' => 'Votre demande de don n°' . $demande->id . ' a été acceptée. Veuillez vous présenter à l’hôpital à la date prévue pour le prélèvement.'
+            'contenu' => 'Votre demande de don n°' . $demande->id . ' a été acceptée. Veuillez vous présenter à l’hôpital ' . $demande->hopital . ' à la date prévue ' . $demande->date_prelevement . ' pour le prélèvement.'
 
         ]);
         return response()->json([
@@ -106,14 +106,14 @@ class ValidationAdmincontroller extends Controller
         $demande = DemandeDon::where('id', $id)->first();
         $user = User::where('id', $demande->user_id)->first();
         if ($demande->status !== "acceptee") {
-               $notification = Notification::create([
+            $notification = Notification::create([
                 'user_id' => $demande->user_id,
-                'contenu' => 'Votre demande de don n°'. $demande->id . 'lA DEMANDE PAS ENCORE ACCCEPTEE'
+                'contenu' => 'Votre demande de don n°' . $demande->id . 'lA DEMANDE PAS ENCORE ACCCEPTEE'
             ]);
             return response()->json([
                 'message' => 'lA DEMANDE PAS ENCORE ACCCEPTEE',
                 "demande" => $demande,
-                'notification'=>$notification
+                'notification' => $notification
             ], 422);
         }
         if ($demande->status === "acceptee" && $demande->date_prelevement) {
@@ -137,7 +137,7 @@ class ValidationAdmincontroller extends Controller
             return response()->json([
                 'message' => 'le prélèvement  est fait et sera ajouter au stock sanguin',
                 "demande" => $demande,
-                "notification"=>$notification
+                "notification" => $notification
             ], 200);
         }
     }
@@ -147,13 +147,13 @@ class ValidationAdmincontroller extends Controller
         $demande = DemandeDon::where('id', $id)->first();
 
         if (!$demande) {
-               $notification = Notification::create([
-                
-                'contenu' => 'Votre demande de don n°'. $demande->id . 'ne peut pas être acceptée car est introuvable.'
+            $notification = Notification::create([
+
+                'contenu' => 'Votre demande de don n°' . $demande->id . 'ne peut pas être acceptée car est introuvable.'
             ]);
             return response()->json([
                 'message' => 'Demande introuvable',
-                'notification'=>$notification
+                'notification' => $notification
             ], 404);
         }
 
@@ -219,7 +219,7 @@ class ValidationAdmincontroller extends Controller
             $demande->save();
             $notification = Notification::create([
                 'user_id' => $demande->user_id,
-                'contenu' => 'Votre demande de transfusion n°' . $demande->id . ' a été acceptée. Veuillez vous présenter à l’hôpital '.$demande->hopital.'à la date prévue.'
+                'contenu' => 'Votre demande de transfusion n°' . $demande->id . ' a été acceptée. Veuillez vous présenter à l’hôpital ' . $demande->hopital . 'à la date prévue ' . $demande->date_transfusion . '.'
             ]);
             return response()->json([
                 'message' => 'demande acceptée',
@@ -237,16 +237,17 @@ class ValidationAdmincontroller extends Controller
         //
         $demande = DemandeTransfusion::where('id', $id)->where('status', "acceptee")->first();
         if ($demande) {
-            $demande->status="terminee";
+            $demande->status = "terminee";
             $demande->save();
             $notification = Notification::create([
                 'user_id' => $demande->user_id,
-                'contenu' => 'Demande de transfusion '. $demande->id .' sanguin est terminée.'
+                'contenu' => 'Demande de transfusion n° ' . $demande->id . ' sanguin est terminée.'
             ]);
+
             return response()->json([
-                'message' => 'Demande de transfusion '. $demande->id .' sanguin est terminée',
+                'message' => 'Demande de transfusion n°' . $demande->id . ' sanguin est terminée',
                 'notification' => $notification,
-                'demande'=>$demande
+                'demande' => $demande
             ], 201);
         }
     }

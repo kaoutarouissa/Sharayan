@@ -44,9 +44,9 @@ class StockController extends Controller
         ]);
     }
 
-    public function retirerPocheStock()
+    public function retirerPocheStock($id)
     {
-        $demandeTransfusion = DemandeTransfusion::where('status', 'terminee')->get();
+        $demandeTransfusion = DemandeTransfusion::where('id', $id)->where('status', 'terminee')->get();
         foreach ($demandeTransfusion as $demande) {
 
             $stock = Stock::where('groupe_sanguin', $demande->groupe_sanguin)

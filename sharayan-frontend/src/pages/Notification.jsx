@@ -20,14 +20,13 @@ export default function Notification() {
 
     getNotifications();
   }, []);
-  
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <Navbar />
 
       <main className="flex-1 p-4 sm:p-6 md:p-10 text-slate-800 font-sans">
         <div className="max-w-5xl mx-auto">
-          {/* Titre */}
           <h2 className="text-xl font-bold text-gray-900">Notifications</h2>
 
           <p className="text-xs text-gray-500 mt-1 mb-6">
@@ -40,24 +39,23 @@ export default function Notification() {
             {notifications.map((notification) => (
               <div
                 key={notification.id}
-                className="relative py-4 border-b border-gray-200"
+                className="mb-4 p-4 bg-white rounded-lg border border-gray-200 shadow-sm"
               >
-                {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
-                  {/* Date */}
-                  <span className="text-[9px] text-gray-400">
-                    {new Date(notification.created_at).toLocaleString()} LA DATE
+                {/* Date */}
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-xs font-bold text-red-800">
+                    {new Date(notification.created_at).toLocaleString()}
                   </span>
                 </div>
 
                 {/* Contenu */}
-                <p className="text-xs text-gray-600 mt-2 leading-relaxed">
+                <p className="text-sm text-gray-700 leading-relaxed">
                   {notification.contenu}
                 </p>
 
                 {/* Envoyé par */}
-                <p className="text-[9px] text-gray-400 mt-2">
-                  Envoyé par :
+                <p className="text-xs text-gray-400 mt-3">
+                  Envoyé par :{" "}
                   <span className="font-semibold text-gray-600">Admin</span>
                 </p>
               </div>

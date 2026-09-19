@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { logout } from "../services/authService";
+// import {getUser} from '../services/authService'
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -274,12 +275,16 @@ export default function Navbar() {
                     {user.role}
                   </p>
                 </div>
-                <Link
-                  to="/notification"
-                  className="block px-4 py-3 rounded-xl text-gray-800 font-semibold hover:bg-gray-50 transition"
-                >
-                  Notifications
-                </Link>
+                {(user.role === "donneur" ||
+                  user.role ===
+                    "patient") && (
+                      <Link
+                        to="/notification"
+                        className="block px-4 py-3 rounded-xl text-gray-800 font-semibold hover:bg-gray-50 transition"
+                      >
+                        Notifications
+                      </Link>
+                    )}
                 {/* Déconnexion */}
                 <button
                   onClick={(e) => {

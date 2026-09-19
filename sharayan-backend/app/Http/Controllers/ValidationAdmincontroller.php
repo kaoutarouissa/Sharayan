@@ -29,14 +29,24 @@ class ValidationAdmincontroller extends Controller
         $age = Carbon::parse($donneur->date_naissance)->age;
 
         if ($demande->status !== "en_attente") {
+              $notification = Notification::create([
+                'user_id' => $demande->user_id,
+                'contenu' => 'Votre demande de don n°'. $demande->id . 'ne peut pas être acceptée car est déjà acceptée.'
+            ]);
             return response()->json([
-                'message' => 'La demande est déjà acceptée'
+                'message' => 'La demande est déjà acceptée',
+                'notification'=>$notification
             ], 422);
         }
 
         if ($age < 18) {
+            $notification = Notification::create([
+                'user_id' => $demande->user_id,
+                'contenu' => 'Votre demande de don n°' . $demande->id . 'ne peut pas être acceptée car vous devez avoir au moins 18 ans.'
+            ]);
             return response()->json([
-                'message' => 'Le donneur doit avoir au moins 18 ans'
+                'message' => 'Le donneur doit avoir au moins 18 ans',
+                'notification' => $notification
             ], 422);
         }
 
@@ -53,8 +63,13 @@ class ValidationAdmincontroller extends Controller
                     ->addMonths(4)
                     ->isFuture()
             ) {
+                $notification = Notification::create([
+                    'user_id' => $demande->user_id,
+                    'contenu' => 'Votre demande de don n°' . $demande->id . ' ne peut pas être acceptée car vous devez attendre 4 mois depuis votre dernier prélèvement.'
+                ]);
                 return response()->json([
-                    'message' => 'Le donneur doit attendre 4 mois depuis son dernier prélèvement.'
+                    'message' => 'Le donneur doit attendre 4 mois depuis son dernier prélèvement.',
+                    'notification' => $notification
                 ], 422);
             }
         }
@@ -64,7 +79,7 @@ class ValidationAdmincontroller extends Controller
 
         $notification = Notification::create([
             'user_id' => $demande->user_id,
-            'contenu' => 'Votre demande de don a été acceptée. Veuillez vous présenter à l’hôpital à la date prévue pour le prélèvement.'
+            'contenu' => 'Votre demande de don n°' . $demande->id . ' a été acceptée. Veuillez vous présenter à l’hôpital à la date prévue pour le prélèvement.'
 
         ]);
         return response()->json([
@@ -91,9 +106,14 @@ class ValidationAdmincontroller extends Controller
         $demande = DemandeDon::where('id', $id)->first();
         $user = User::where('id', $demande->user_id)->first();
         if ($demande->status !== "acceptee") {
+               $notification = Notification::create([
+                'user_id' => $demande->user_id,
+                'contenu' => 'Votre demande de don n°'. $demande->id . 'lA DEMANDE PAS ENCORE ACCCEPTEE'
+            ]);
             return response()->json([
                 'message' => 'lA DEMANDE PAS ENCORE ACCCEPTEE',
-                "demande" => $demande
+                "demande" => $demande,
+                'notification'=>$notification
             ], 422);
         }
         if ($demande->status === "acceptee" && $demande->date_prelevement) {
@@ -109,9 +129,15 @@ class ValidationAdmincontroller extends Controller
                 'quantite' => 1,
                 'status' => 'disponible'
             ]);
+            $notification = Notification::create([
+                'user_id' => $demande->user_id,
+                'contenu' => 'Votre prélèvement a été effectué avec succès. Merci pour votre don et votre engagement.'
+            ]);
+
             return response()->json([
                 'message' => 'le prélèvement  est fait et sera ajouter au stock sanguin',
-                "demande" => $demande
+                "demande" => $demande,
+                "notification"=>$notification
             ], 200);
         }
     }
@@ -119,51 +145,65 @@ class ValidationAdmincontroller extends Controller
     public function refuserDemandeDon(int $id)
     {
         $demande = DemandeDon::where('id', $id)->first();
+
         if (!$demande) {
+               $notification = Notification::create([
+                
+                'contenu' => 'Votre demande de don n°'. $demande->id . 'ne peut pas être acceptée car est introuvable.'
+            ]);
             return response()->json([
-                'message' => 'Demande introvable'
+                'message' => 'Demande introuvable',
+                'notification'=>$notification
             ], 404);
         }
-        $donneur = User::where('id', $demande->user_id)->first();
-        $age = Carbon::parse($donneur->date_naissance)->age;
+
         if ($demande->status !== "en_attente") {
             return response()->json([
                 'message' => 'La demande est déjà traitée'
             ], 422);
         }
+
+        $donneur = User::where('id', $demande->user_id)->first();
+        $age = Carbon::parse($donneur->date_naissance)->age;
+
+        $contenu = '';
+
         if ($age < 18) {
 
-            $demande->status = "refusee";
-            $demande->save();
+            $contenu = 'Votre demande de don n°' . $demande->id . ' a été refusée car vous devez avoir au moins 18 ans.';
 
-            return response()->json([
-                'message' => 'La demande est refusée : le donneur doit avoir au moins 18 ans'
-            ], 200);
-        }
-        $dernierDemande = DemandeDon::where('user_id', $demande->user_id)
-            ->where('status', 'terminee')
-            ->latest('date_prelevement')
-            ->first();
-        if ($dernierDemande) {
+        } else {
+
+            $dernierDemande = DemandeDon::where('user_id', $demande->user_id)
+                ->where('status', 'terminee')
+                ->latest('date_prelevement')
+                ->first();
 
             if (
+                $dernierDemande &&
                 Carbon::parse($dernierDemande->date_prelevement)
                     ->addMonths(4)
                     ->isFuture()
             ) {
 
-                $demande->status = "refusee";
-                $demande->save();
+                $contenu = 'Votre demande de don n°' . $demande->id . ' a été refusée car vous devez attendre 4 mois depuis votre dernier prélèvement.';
 
-                return response()->json([
-                    'message' => 'La demande est refusée : le donneur doit attendre 4 mois.'
-                ], 200);
+            } else {
+                $contenu = 'Votre demande de don  n°' . $demande->id . 'a été refusée car les conditions requises ne sont pas remplies.';
             }
         }
-        return response()->json([
-            'message' => 'Les conditions sont respectées, la demande peut être acceptée.'
-        ], 200);
 
+        $demande->status = "refusee";
+        $demande->save();
+
+        Notification::create([
+            'user_id' => $demande->user_id,
+            'contenu' => $contenu
+        ]);
+
+        return response()->json([
+            'message' => 'La demande a été refusée.'
+        ], 200);
     }
 
     public function accepterDemandTransfusion(int $id)
@@ -179,12 +219,12 @@ class ValidationAdmincontroller extends Controller
             $demande->save();
             $notification = Notification::create([
                 'user_id' => $demande->user_id,
-                'contenu' => 'Votre demande de transfusion a été acceptée. Veuillez vous présenter à l’hôpital à la date prévue.'
+                'contenu' => 'Votre demande de transfusion n°' . $demande->id . ' a été acceptée. Veuillez vous présenter à l’hôpital '.$demande->hopital.'à la date prévue.'
             ]);
             return response()->json([
                 'message' => 'demande acceptée',
                 'notification' => $notification
-            ]);
+            ], 201);
         }
 
         return response()->json([
@@ -195,11 +235,19 @@ class ValidationAdmincontroller extends Controller
     public function terminerDemandeTransfusion(int $id)
     {
         //
-        $demande = DemandeTransfusion::whree('id', $id)->where('status', "acceptee")->first();
+        $demande = DemandeTransfusion::where('id', $id)->where('status', "acceptee")->first();
         if ($demande) {
-            return response()->json([
-                'message' => 'Demande de transfusion sanguin est terminée'
+            $demande->status="terminee";
+            $demande->save();
+            $notification = Notification::create([
+                'user_id' => $demande->user_id,
+                'contenu' => 'Demande de transfusion '. $demande->id .' sanguin est terminée.'
             ]);
+            return response()->json([
+                'message' => 'Demande de transfusion '. $demande->id .' sanguin est terminée',
+                'notification' => $notification,
+                'demande'=>$demande
+            ], 201);
         }
     }
 
@@ -242,4 +290,5 @@ class ValidationAdmincontroller extends Controller
     {
         //
     }
+
 }

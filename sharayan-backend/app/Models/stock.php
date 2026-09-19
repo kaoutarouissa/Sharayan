@@ -15,7 +15,11 @@ class stock extends Model
         'status',
     ];
     public function demandeDon()
-{
-    return $this->belongsTo(DemandeDon::class, 'demande_don_id');
-}
+    {
+        return $this->belongsTo(DemandeDon::class, 'demande_don_id');
+    }
+    public function demandeTransfusion()
+    {
+        return $this->hasMany(DemandeTransfusion::class);
+    }
 }

@@ -10,7 +10,10 @@ import {
   terminerDemande,
   refuserDemandeDon,
 } from "../../services/validationDonService";
-import { accepterDemandTransfusion } from "../../services/validationTransfusionService";
+import {
+  accepterDemandTransfusion,
+  terminerTransfusion,
+} from "../../services/validationTransfusionService";
 import { getinfoStock } from "../../services/stockService";
 export default function AdminDashboard() {
   const [demandes, setDemandes] = useState([]);
@@ -20,6 +23,8 @@ export default function AdminDashboard() {
   const [refuserDonMessage, setrefuserDonMessage] = useState("");
   const [stock, setStock] = useState([]);
   const [accepterTransfussionMessage, setaccepterTransfusion] = useState("");
+  const [terminerTransfusionMessage, setTerminerTransfusionMessage] =
+    useState("");
   const [demandeTransfusion, setDemandetransfusion] = useState([]);
   useEffect(() => {
     const getDemandesDon = async () => {
@@ -95,6 +100,14 @@ export default function AdminDashboard() {
       setaccepterTransfusion(data.message);
     } catch (error) {
       setMessageError(error.response?.data?.message);
+    }
+  };
+  const handelTerminerTransfusion = async (id) => {
+    try {
+      const data = await terminerTransfusion(id);
+      setTerminerTransfusionMessage("Demande de transfusion est acceptée");
+    } catch (error) {
+      setTerminerTransfusionMessage(error.response?.data?.message);
     }
   };
   useEffect(() => {
@@ -270,7 +283,21 @@ export default function AdminDashboard() {
               Traitement et suivi des demandes de transfusion sanguine
             </p>
           </div>
-
+          {accepterTransfussionMessage && (
+            <div className="bg-red-50 text-green-400 p-3 rounded-lg mb-4">
+              {accepterTransfussionMessage}
+            </div>
+          )}
+          {messageError && (
+            <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4">
+              {messageError}
+            </div>
+          )}
+          {terminerTransfusionMessage && (
+            <div className="bg-red-50 text-green-400 p-3 rounded-lg mb-4">
+              {terminerTransfusionMessage}
+            </div>
+          )}
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse min-w-[1000px]">
               <thead>
@@ -331,27 +358,43 @@ export default function AdminDashboard() {
 
                     <td className="p-3">
                       {item.status === "en_attente" && (
-                        <span className="bg-amber-50 text-amber-600 px-2.5 py-1 rounded-full font-medium">
+                        <span className=" text-amber-600 px-2.5 py-1 rounded-full font-medium">
                           {item.status}
                         </span>
                       )}
-                      {item.status === "accepte" && (
-                        <span className="bg-amber-50 text-green-600 px-2.5 py-1 rounded-full font-medium">
+                      {item.status === "acceptee" && (
+                        <span className="  text-green-400 px-2.5 py-1 rounded-full font-medium">
                           {item.status}
                         </span>
                       )}
                       {item.status === "terminee" && (
-                        <span className="bg-amber-50 text-blue-600 px-2.5 py-1 rounded-full font-medium">
+                        <span className=" text-blue-600 px-2.5 py-1 rounded-full font-medium">
                           {item.status}
                         </span>
                       )}
                     </td>
 
                     <td className="p-3 text-center">
-                      <select className="border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-[#A6192E]">
+                      <select
+                        onChange={(e) => {
+                          if (e.target.value === "acceptee") {
+                            handelAccepterTransfusion(item.id);
+                          }
+                          if (e.target.value === "terminee") {
+                            handelTerminerTransfusion(item.id);
+                          }
+                        }}
+                        className="border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-[#A6192E]"
+                      >
                         <option>Choisir</option>
-                        <option value="acceptee">Accepter</option>
+                        {item.status === "en_attente" && (
+                          
+                            <option value="acceptee">Accepter</option>
+                            )}
+                        
+                        {item.status === "acceptee" && (
                         <option value="terminee">Terminer</option>
+                        ) }
                       </select>
                     </td>
                   </tr>

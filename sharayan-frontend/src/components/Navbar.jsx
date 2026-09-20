@@ -79,7 +79,7 @@ export default function Navbar() {
             <div className="flex items-center gap-8 lg:gap-10">
               {/* Urgence */}
               <Link
-                to="/urgence"
+                to="/espace-urgence"
                 className="text-[#B31919] hover:text-[#8B1212] text-sm lg:text-base font-semibold leading-tight text-center transition"
               >
                 Espace
@@ -238,7 +238,7 @@ export default function Navbar() {
           <div className="md:hidden border-t border-gray-100 py-4 space-y-2">
             {/* Urgence */}
             <Link
-              to="/urgence"
+              to="/espace-urgence"
               onClick={() => setMenuOpen(false)}
               className="block px-4 py-3 rounded-xl text-[#B31919] font-semibold hover:bg-red-50 transition"
             >

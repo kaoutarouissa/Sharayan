@@ -3,6 +3,7 @@
 use App\Http\Controllers\Authcontroller;
 use App\Http\Controllers\DemandeDonController;
 use App\Http\Controllers\DemandeTransfusionController;
+use App\Http\Controllers\EspaceUrgenceController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\ValidationAdmincontroller;
@@ -37,4 +38,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::get('/notifications', [NotificationController::class, 'index']);
-});
+
+    });
+    Route::get('/espace-urgence', [EspaceUrgenceController::class, 'index']);

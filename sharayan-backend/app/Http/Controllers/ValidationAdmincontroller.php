@@ -122,13 +122,14 @@ class ValidationAdmincontroller extends Controller
             $user->groupe_sanguin = $groupeSanguin;
             $demande->save();
             $user->save();
-            Stock::create([
+          $stock=  Stock::create([
                 'demande_don_id' => $demande->id,
                 'groupe_sanguin' => $groupeSanguin,
                 'date_expiration' => Carbon::parse($demande->date_prelevement)->addDays(42),
                 'quantite' => 1,
                 'status' => 'disponible'
             ]);
+            // dd($stock);
             $notification = Notification::create([
                 'user_id' => $demande->user_id,
                 'contenu' => 'Votre prélèvement a été effectué avec succès. Merci pour votre don et votre engagement.'
@@ -137,7 +138,8 @@ class ValidationAdmincontroller extends Controller
             return response()->json([
                 'message' => 'le prélèvement  est fait et sera ajouter au stock sanguin',
                 "demande" => $demande,
-                "notification" => $notification
+                "notification" => $notification,
+                "stock"=>$stock
             ], 200);
         }
     }

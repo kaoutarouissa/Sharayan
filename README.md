@@ -121,8 +121,11 @@ Sharayan/
   ├── docker-compose.yml
   │ 
   └── README.md
+  ```
 
-##  Diagrammes UML
+---
+
+#  Diagrammes UML
 
 ### Diagramme de cas d'utilisation
 
@@ -162,8 +165,9 @@ Sharayan/
 ├── MySQL
 │
 └── docker-compose.yml
-
-## Installation et lancement
+```
+---
+# Installation et lancement
 1. Cloner le projet
 git clone https://github.com/kaoutarouissa/Sharayan.git
 cd Sharayan
@@ -204,7 +208,7 @@ patient
 
 Chaque rôle possède des fonctionnalités et des accès différents.
 
-## Auteur
+# Auteur
 
 Kaoutar Ouissa
 

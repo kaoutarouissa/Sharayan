@@ -1,7 +1,6 @@
-  
-# 🩸 Sharayan
+# Sharayan
 
-## 📖 Présentation
+## Présentation
 
 **Sharayan** est une application web dédiée à la gestion du don et de la transfusion sanguine.
 
@@ -11,7 +10,7 @@ Le projet a été réalisé dans le cadre de ma formation en **Développement Fu
 
 ---
 
-## 🎯 Objectifs
+## Objectifs
 
 Les principaux objectifs de l'application sont :
 
@@ -26,11 +25,11 @@ Les principaux objectifs de l'application sont :
 
 ---
 
-# 👥 Utilisateurs de l'application
+# Utilisateurs de l'application
 
 L'application possède trois rôles principaux :
 
-### 👤 Patient
+### Patient
 
 Le patient peut :
 
@@ -41,7 +40,7 @@ Le patient peut :
 - Annuler une demande lorsque son statut est `en_attente`.
 - Consulter et modifier ses informations personnelles.
 
-### 🩸 Donneur
+### Donneur
 
 Le donneur peut :
 
@@ -52,7 +51,7 @@ Le donneur peut :
 - Suivre le statut de sa demande.
 - Consulter et modifier ses informations personnelles.
 
-### 👨‍💼 Administrateur
+###  Administrateur
 
 L'administrateur peut :
 
@@ -67,7 +66,7 @@ L'administrateur peut :
 
 ---
 
-# 🛠️ Technologies utilisées
+# Technologies utilisées
 
 ## Backend
 
@@ -96,26 +95,32 @@ L'administrateur peut :
 - **Postman**
 - **StarUML**
 - **Figma**
+- **DockerHub**
 
 ---
 
-# 🏗️ Architecture du projet
+#  Architecture du projet
 
 Le projet est organisé en deux parties principales :
 
-
 Sharayan/
-│
-├── sharayan-backend/
-│
-├── sharayan-frontend/
-│
-├── docker-compose.yml
-│
-└── README.md
+ │ 
+ ├── sharayan-backend/
+  │ └── Laravel API
+  │
+  ├── sharayan-frontend/
+  │ └── React + Vite
+  │ 
+  ├── Diagrammes-Sharayan/
+  │ ├── UseCaseDiagram1.png
+  │ ├── ClassDiagram1.png
+  │ └── ERDDiagram1.png
+  │ 
+  ├── docker-compose.yml
+  │ 
+  └── README.md
 
-
-## 📊 Diagrammes UML
+##  Diagrammes UML
 
 ### Diagramme de cas d'utilisation
 
@@ -129,10 +134,9 @@ Sharayan/
 
 ![Diagramme ERD](./Diagrammes-Sharayan/ERDDiagram1.png)
 
-
 ---
 
-# 🐳 Docker
+#  Docker
 
 Le projet Sharayan utilise **Docker** et **Docker Compose** afin de faciliter la configuration et l'exécution de l'environnement de développement.
 
@@ -142,17 +146,63 @@ L'environnement Docker contient :
 - un conteneur pour le frontend React ;
 - un conteneur pour la base de données MySQL.
 
-## 📦 Architecture Docker
-
+##  Architecture Docker
 
 Sharayan
 │
 ├── sharayan-backend
-│   └── Laravel
+│ └── Laravel
 │
 ├── sharayan-frontend
-│   └── React + Vite
+│ └── React + Vite
 │
 ├── MySQL
 │
 └── docker-compose.yml
+
+## Installation et lancement
+1. Cloner le projet
+git clone https://github.com/kaoutarouissa/Sharayan.git
+cd Sharayan
+2. Lancer les conteneurs Docker
+docker compose up -d --build
+3. Vérifier les conteneurs
+docker compose ps
+
+Les conteneurs principaux doivent être démarrés :
+
+sharayan-backend
+sharayan-frontend
+sharayan-mysql
+4. Exécuter les migrations Laravel
+docker compose exec backend php artisan migrate
+
+Si les données de test doivent être générées :
+
+docker compose exec backend php artisan db:seed
+
+## Accès à l'application
+
+Une fois les conteneurs démarrés :
+
+Frontend React : http://localhost:5173
+Backend Laravel API : http://localhost:8000
+API : http://localhost:8000/api
+
+## Authentification
+
+L'application utilise Laravel Sanctum pour gérer l'authentification des utilisateurs.
+
+Les utilisateurs sont répartis en trois rôles :
+
+admin
+donneur
+patient
+
+Chaque rôle possède des fonctionnalités et des accès différents.
+
+## Auteur
+
+Kaoutar Ouissa
+
+Projet réalisé dans le cadre de la formation Développement Full Stack.

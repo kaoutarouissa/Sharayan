@@ -103,6 +103,8 @@ L'administrateur peut :
 
 Le projet est organisé en deux parties principales :
 
+
+```text
 Sharayan/
  │ 
  ├── sharayan-backend/
@@ -148,13 +150,14 @@ L'environnement Docker contient :
 
 ##  Architecture Docker
 
-Sharayan
+```text
+Sharayan/
 │
-├── sharayan-backend
-│ └── Laravel
+├── sharayan-backend/
+│   └── Laravel API
 │
-├── sharayan-frontend
-│ └── React + Vite
+├── sharayan-frontend/
+│   └── React + Vite
 │
 ├── MySQL
 │

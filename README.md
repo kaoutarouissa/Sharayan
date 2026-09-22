@@ -152,8 +152,8 @@ L'environnement Docker contient :
 - un conteneur pour la base de données MySQL.
 ---
 ### Docker Hub
-- image backend :  [Docker Hub - Backend](https://hub.docker.com/r/kaoutarouissa25/sharayan-backend)
-- image frontend : [DockerHub] (https://hub.docker.com/repository/docker/kaoutarouissa25/sharayan-backend/general)
+- [Sharayan Backend](https://hub.docker.com/r/kaoutarouissa25/sharayan-backend)
+- [Sharayan Frontend](https://hub.docker.com/r/kaoutarouissa25/sharayan-frontend)
 
 ##  Architecture Docker
 
